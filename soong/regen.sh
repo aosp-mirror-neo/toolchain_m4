@@ -22,6 +22,15 @@ DIR=linux_glibc
 if [ `uname` == "Darwin" ]; then
   DIR=darwin
 fi
+
+configure_args=""
+
+if [ "$1" = "--musl_sysroot" ]; then
+  DIR=linux_musl
+  sysroot=$2
+  configure_args="CC=${sysroot}/bin/musl-clang CXX=${sysroot}/bin/musl-clang LDFLAGS=--rtlib=compiler-rt"
+fi
+
 mkdir -p $DIR
 cd $DIR
 
@@ -29,7 +38,7 @@ cd $DIR
 rm -rf tmp
 mkdir tmp
 cd tmp
-../../../configure
+../../../configure ${configure_args}
 make
 cd lib
 find . -name '*.h' | xargs -IX cp X ../../

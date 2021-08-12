@@ -15,7 +15,7 @@
 cc_binary_host {
     name: "m4",
 
-    cflags: [ "-Wno-unused-parameter" ],
+    cflags: ["-Wno-unused-parameter"],
     stl: "none",
 
     local_include_dirs: [
@@ -109,9 +109,7 @@ cc_binary_host {
         "lib/fclose.c",
         "lib/fflush.c",
         "lib/fpurge.c",
-        "lib/freadahead.c",
         "lib/fseek.c",
-        "lib/fseeko.c",
         "lib/obstack.c",
         "lib/printf-args.c",
         "lib/printf-parse.c",
@@ -119,11 +117,33 @@ cc_binary_host {
     ],
 
     target: {
-        linux_glibc: {
+        glibc: {
             local_include_dirs: ["soong/linux_glibc"],
             srcs: [
                 "lib/fcntl.c",
+                "lib/freadahead.c",
+                "lib/fseeko.c",
                 "lib/mbrtowc.c",
+            ],
+            // TODO(b/131098715): remove
+            static_libs: ["libcompiler_rt"],
+        },
+        musl: {
+            local_include_dirs: ["soong/linux_musl"],
+            srcs: [
+                "lib/canonicalize-lgpl.c",
+                "lib/error.c",
+                "lib/fcntl.c",
+                "lib/getopt1.c",
+                "lib/getopt.c",
+                "lib/isnanf.c",
+                "lib/isnanl.c",
+                "lib/mbrtowc.c",
+                "lib/rawmemchr.c",
+                "lib/regex.c",
+                "lib/spawn_faction_addclose.c",
+                "lib/spawn_faction_adddup2.c",
+                "lib/spawn_faction_addopen.c",
             ],
             // TODO(b/131098715): remove
             static_libs: ["libcompiler_rt"],
@@ -135,6 +155,8 @@ cc_binary_host {
                 "lib/canonicalize-lgpl.c",
                 "lib/error.c",
                 "lib/fpending.c",
+                "lib/freadahead.c",
+                "lib/fseeko.c",
                 "lib/getopt.c",
                 "lib/getopt1.c",
                 "lib/isnanf.c",
