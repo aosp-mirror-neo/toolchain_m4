@@ -1,5 +1,5 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
-/* Copyright (C) 2001-2002, 2004-2016 Free Software Foundation, Inc.
+/* Copyright (C) 2001-2002, 2004-2021 Free Software Foundation, Inc.
    Written by Paul Eggert, Bruno Haible, Sam Steingold, Peter Burwood.
    This file is part of gnulib.
 
@@ -14,11 +14,11 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, see <http://www.gnu.org/licenses/>.  */
+   along with this program; if not, see <https://www.gnu.org/licenses/>.  */
 
 /*
  * ISO C 99 <stdint.h> for platforms that lack it.
- * <http://www.opengroup.org/susv3xbd/stdint.h.html>
+ * <https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/stdint.h.html>
  */
 
 #ifndef _GL_M4_STDINT_H
@@ -129,8 +129,13 @@
    Return an unspecified value if BITS == 0, adding a check to pacify
    picky compilers.  */
 
-# define _STDINT_MIN(signed, bits, zero) \
-    ((signed) ? ~ _STDINT_MAX (signed, bits, zero) : (zero))
+/* These are separate macros, because if you try to merge these macros into
+   a single one, HP-UX cc rejects the resulting expression in constant
+   expressions.  */
+# define _STDINT_UNSIGNED_MIN(bits, zero) \
+    (zero)
+# define _STDINT_SIGNED_MIN(bits, zero) \
+    (~ _STDINT_MAX (1, bits, zero))
 
 # define _STDINT_MAX(signed, bits, zero) \
     (((((zero) + 1) << ((bits) ? (bits) - 1 - (signed) : 0)) - 1) * 2 + 1)
@@ -184,7 +189,7 @@ typedef long int gl_int64_t;
 typedef __int64 gl_int64_t;
 #   define int64_t gl_int64_t
 #   define GL_INT64_T
-#  elif 1
+#  else
 #   undef int64_t
 typedef long long int gl_int64_t;
 #   define int64_t gl_int64_t
@@ -205,7 +210,7 @@ typedef unsigned long int gl_uint64_t;
 typedef unsigned __int64 gl_uint64_t;
 #   define uint64_t gl_uint64_t
 #   define GL_UINT64_T
-#  elif 1
+#  else
 #   undef uint64_t
 typedef unsigned long long int gl_uint64_t;
 #   define uint64_t gl_uint64_t
@@ -295,16 +300,25 @@ typedef gl_uint_fast32_t gl_uint_fast16_t;
 
 /* 7.18.1.4. Integer types capable of holding object pointers */
 
-/* kLIBC's stdint.h defines _INTPTR_T_DECLARED and needs its own
+/* kLIBC's <stdint.h> defines _INTPTR_T_DECLARED and needs its own
    definitions of intptr_t and uintptr_t (which use int and unsigned)
-   to avoid clashes with declarations of system functions like sbrk.  */
-# ifndef _INTPTR_T_DECLARED
-# undef intptr_t
-# undef uintptr_t
+   to avoid clashes with declarations of system functions like sbrk.
+   Similarly, MinGW WSL-5.4.1 <stdint.h> needs its own intptr_t and
+   uintptr_t to avoid conflicting declarations of system functions like
+   _findclose in <io.h>.  */
+# if !((defined __KLIBC__ && defined _INTPTR_T_DECLARED) \
+       || defined __MINGW32__)
+#  undef intptr_t
+#  undef uintptr_t
+#  ifdef _WIN64
+typedef long long int gl_intptr_t;
+typedef unsigned long long int gl_uintptr_t;
+#  else
 typedef long int gl_intptr_t;
 typedef unsigned long int gl_uintptr_t;
-# define intptr_t gl_intptr_t
-# define uintptr_t gl_uintptr_t
+#  endif
+#  define intptr_t gl_intptr_t
+#  define uintptr_t gl_uintptr_t
 # endif
 
 /* 7.18.1.5. Greatest-width integer types */
@@ -319,7 +333,7 @@ typedef unsigned long int gl_uintptr_t;
 # ifndef INTMAX_MAX
 #  undef INTMAX_C
 #  undef intmax_t
-#  if 1 && LONG_MAX >> 30 == 1
+#  if LONG_MAX >> 30 == 1
 typedef long long int gl_intmax_t;
 #   define intmax_t gl_intmax_t
 #  elif defined GL_INT64_T
@@ -333,7 +347,7 @@ typedef long int gl_intmax_t;
 # ifndef UINTMAX_MAX
 #  undef UINTMAX_C
 #  undef uintmax_t
-#  if 1 && ULONG_MAX >> 31 == 1
+#  if ULONG_MAX >> 31 == 1
 typedef unsigned long long int gl_uintmax_t;
 #   define uintmax_t gl_uintmax_t
 #  elif defined GL_UINT64_T
@@ -481,9 +495,15 @@ typedef int _verify_intmax_size[sizeof (intmax_t) == sizeof (uintmax_t)
 # undef INTPTR_MIN
 # undef INTPTR_MAX
 # undef UINTPTR_MAX
-# define INTPTR_MIN  LONG_MIN
-# define INTPTR_MAX  LONG_MAX
-# define UINTPTR_MAX  ULONG_MAX
+# ifdef _WIN64
+#  define INTPTR_MIN  LLONG_MIN
+#  define INTPTR_MAX  LLONG_MAX
+#  define UINTPTR_MAX  ULLONG_MAX
+# else
+#  define INTPTR_MIN  LONG_MIN
+#  define INTPTR_MAX  LONG_MAX
+#  define UINTPTR_MAX  ULONG_MAX
+# endif
 
 /* 7.18.2.5. Limits of greatest-width integer types */
 
@@ -513,15 +533,15 @@ typedef int _verify_intmax_size[sizeof (intmax_t) == sizeof (uintmax_t)
 # undef PTRDIFF_MAX
 # if 0
 #  ifdef _LP64
-#   define PTRDIFF_MIN  _STDINT_MIN (1, 64, 0l)
+#   define PTRDIFF_MIN  _STDINT_SIGNED_MIN (64, 0l)
 #   define PTRDIFF_MAX  _STDINT_MAX (1, 64, 0l)
 #  else
-#   define PTRDIFF_MIN  _STDINT_MIN (1, 32, 0)
+#   define PTRDIFF_MIN  _STDINT_SIGNED_MIN (32, 0)
 #   define PTRDIFF_MAX  _STDINT_MAX (1, 32, 0)
 #  endif
 # else
 #  define PTRDIFF_MIN  \
-    _STDINT_MIN (1, , 0)
+    _STDINT_SIGNED_MIN (, 0)
 #  define PTRDIFF_MAX  \
     _STDINT_MAX (1, , 0)
 # endif
@@ -529,9 +549,13 @@ typedef int _verify_intmax_size[sizeof (intmax_t) == sizeof (uintmax_t)
 /* sig_atomic_t limits */
 # undef SIG_ATOMIC_MIN
 # undef SIG_ATOMIC_MAX
-# define SIG_ATOMIC_MIN  \
-   _STDINT_MIN (, , \
-                0)
+# if 
+#  define SIG_ATOMIC_MIN  \
+    _STDINT_SIGNED_MIN (, 0)
+# else
+#  define SIG_ATOMIC_MIN  \
+    _STDINT_UNSIGNED_MIN (, 0)
+# endif
 # define SIG_ATOMIC_MAX  \
    _STDINT_MAX (, , \
                 0)
@@ -556,29 +580,38 @@ typedef int _verify_intmax_size[sizeof (intmax_t) == sizeof (uintmax_t)
    <wchar.h> -> <stdio.h> -> <getopt.h> -> <stdlib.h>, and the latter includes
    <stdint.h> and assumes its types are already defined.  */
 # if 1 && ! (defined WCHAR_MIN && defined WCHAR_MAX)
-  /* BSD/OS 4.0.1 has a bug: <stddef.h>, <stdio.h> and <time.h> must be
-     included before <wchar.h>.  */
-#  include <stddef.h>
-#  include <stdio.h>
-#  include <time.h>
 #  define _GL_JUST_INCLUDE_SYSTEM_WCHAR_H
 #  include <wchar.h>
 #  undef _GL_JUST_INCLUDE_SYSTEM_WCHAR_H
 # endif
 # undef WCHAR_MIN
 # undef WCHAR_MAX
-# define WCHAR_MIN  \
-   _STDINT_MIN (, , 0)
+# if 
+#  define WCHAR_MIN  \
+    _STDINT_SIGNED_MIN (, 0)
+# else
+#  define WCHAR_MIN  \
+    _STDINT_UNSIGNED_MIN (, 0)
+# endif
 # define WCHAR_MAX  \
    _STDINT_MAX (, , 0)
 
 /* wint_t limits */
-# undef WINT_MIN
-# undef WINT_MAX
-# define WINT_MIN  \
-   _STDINT_MIN (, , 0)
-# define WINT_MAX  \
-   _STDINT_MAX (, , 0)
+/* If gnulib's <wchar.h> or <wctype.h> overrides wint_t,  is not
+   accurate, therefore use the definitions from above.  */
+# if !0
+#  undef WINT_MIN
+#  undef WINT_MAX
+#  if 
+#   define WINT_MIN  \
+     _STDINT_SIGNED_MIN (, 0)
+#  else
+#   define WINT_MIN  \
+     _STDINT_UNSIGNED_MIN (, 0)
+#  endif
+#  define WINT_MAX  \
+    _STDINT_MAX (, , 0)
+# endif
 
 /* 7.18.4. Macros for integer constants */
 
@@ -609,21 +642,21 @@ typedef int _verify_intmax_size[sizeof (intmax_t) == sizeof (uintmax_t)
 #  define INT64_C(x) x##L
 # elif defined _MSC_VER
 #  define INT64_C(x) x##i64
-# elif 1
+# else
 #  define INT64_C(x) x##LL
 # endif
 # if ULONG_MAX >> 31 >> 31 >> 1 == 1
 #  define UINT64_C(x) x##UL
 # elif defined _MSC_VER
 #  define UINT64_C(x) x##ui64
-# elif 1
+# else
 #  define UINT64_C(x) x##ULL
 # endif
 
 /* 7.18.4.2. Macros for greatest-width integer constants */
 
 # ifndef INTMAX_C
-#  if 1 && LONG_MAX >> 30 == 1
+#  if LONG_MAX >> 30 == 1
 #   define INTMAX_C(x)   x##LL
 #  elif defined GL_INT64_T
 #   define INTMAX_C(x)   INT64_C(x)
@@ -633,7 +666,7 @@ typedef int _verify_intmax_size[sizeof (intmax_t) == sizeof (uintmax_t)
 # endif
 
 # ifndef UINTMAX_C
-#  if 1 && ULONG_MAX >> 31 == 1
+#  if ULONG_MAX >> 31 == 1
 #   define UINTMAX_C(x)  x##ULL
 #  elif defined GL_UINT64_T
 #   define UINTMAX_C(x)  UINT64_C(x)
