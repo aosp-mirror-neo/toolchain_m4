@@ -1,7 +1,7 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* A GNU-like <string.h>.
 
-   Copyright (C) 1995-1996, 2001-2016 Free Software Foundation, Inc.
+   Copyright (C) 1995-1996, 2001-2021 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, see <http://www.gnu.org/licenses/>.  */
+   along with this program; if not, see <https://www.gnu.org/licenses/>.  */
 
 #if __GNUC__ >= 3
 #pragma GCC system_header
@@ -49,16 +49,18 @@
 #include <stddef.h>
 
 /* MirBSD defines mbslen as a macro.  */
-#if 0 && defined __MirBSD__
+#if 1 && defined __MirBSD__
 # include <wchar.h>
 #endif
 
 /* The __attribute__ feature is available in gcc versions 2.5 and later.
    The attribute __pure__ was added in gcc 2.96.  */
-#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96)
-# define _GL_ATTRIBUTE_PURE __attribute__ ((__pure__))
-#else
-# define _GL_ATTRIBUTE_PURE /* empty */
+#ifndef _GL_ATTRIBUTE_PURE
+# if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96) || defined __clang__
+#  define _GL_ATTRIBUTE_PURE __attribute__ ((__pure__))
+# else
+#  define _GL_ATTRIBUTE_PURE /* empty */
+# endif
 #endif
 
 /* NetBSD 5.0 declares strsignal in <unistd.h>, not in <string.h>.  */
@@ -68,7 +70,31 @@
 # include <unistd.h>
 #endif
 
+/* AIX 7.2 declares ffsl and ffsll in <strings.h>, not in <string.h>.  */
+/* But in any case avoid namespace pollution on glibc systems.  */
+#if ((0 || 0 || defined GNULIB_POSIXCHECK) \
+     && defined _AIX) \
+    && ! defined __GLIBC__
+# include <strings.h>
+#endif
+
 /* The definitions of _GL_FUNCDECL_RPL etc. are copied here.  */
+/* C++ compatible function declaration macros.
+   Copyright (C) 2010-2021 Free Software Foundation, Inc.
+
+   This program is free software: you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published
+   by the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
+
 #ifndef _GL_CXXDEFS_H
 #define _GL_CXXDEFS_H
 
@@ -201,6 +227,16 @@
     _GL_EXTERN_C int _gl_cxxalias_dummy
 #endif
 
+/* _GL_CXXALIAS_MDA (func, rettype, parameters);
+   is to be used when func is a Microsoft deprecated alias, on native Windows.
+   It declares a C++ alias called GNULIB_NAMESPACE::func
+   that redirects to _func, if GNULIB_NAMESPACE is defined.
+   Example:
+     _GL_CXXALIAS_MDA (open, int, (const char *filename, int flags, ...));
+ */
+#define _GL_CXXALIAS_MDA(func,rettype,parameters) \
+  _GL_CXXALIAS_RPL_1 (func, _##func, rettype, parameters)
+
 /* _GL_CXXALIAS_RPL_CAST_1 (func, rpl_func, rettype, parameters);
    is like  _GL_CXXALIAS_RPL_1 (func, rpl_func, rettype, parameters);
    except that the C function rpl_func may have a slightly different
@@ -225,6 +261,14 @@
 # define _GL_CXXALIAS_RPL_CAST_1(func,rpl_func,rettype,parameters) \
     _GL_EXTERN_C int _gl_cxxalias_dummy
 #endif
+
+/* _GL_CXXALIAS_MDA_CAST (func, rettype, parameters);
+   is like  _GL_CXXALIAS_MDA (func, rettype, parameters);
+   except that the C function func may have a slightly different declaration.
+   A cast is used to silence the "invalid conversion" error that would
+   otherwise occur.  */
+#define _GL_CXXALIAS_MDA_CAST(func,rettype,parameters) \
+  _GL_CXXALIAS_RPL_CAST_1 (func, _##func, rettype, parameters)
 
 /* _GL_CXXALIAS_SYS (func, rettype, parameters);
    declares a C++ alias called GNULIB_NAMESPACE::func
@@ -321,9 +365,9 @@
    _GL_CXXALIASWARN_1 (func, GNULIB_NAMESPACE)
 # define _GL_CXXALIASWARN_1(func,namespace) \
    _GL_CXXALIASWARN_2 (func, namespace)
-/* To work around GCC bug <http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43881>,
+/* To work around GCC bug <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=43881>,
    we enable the warning only when not optimizing.  */
-# if !__OPTIMIZE__
+# if !(defined __GNUC__ && !defined __clang__ && __OPTIMIZE__)
 #  define _GL_CXXALIASWARN_2(func,namespace) \
     _GL_WARN_ON_USE (func, \
                      "The symbol ::" #func " refers to the system function. " \
@@ -349,16 +393,13 @@
                         GNULIB_NAMESPACE)
 # define _GL_CXXALIASWARN1_1(func,rettype,parameters_and_attributes,namespace) \
    _GL_CXXALIASWARN1_2 (func, rettype, parameters_and_attributes, namespace)
-/* To work around GCC bug <http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43881>,
+/* To work around GCC bug <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=43881>,
    we enable the warning only when not optimizing.  */
-# if !__OPTIMIZE__
+# if !(defined __GNUC__ && !defined __clang__ && __OPTIMIZE__)
 #  define _GL_CXXALIASWARN1_2(func,rettype,parameters_and_attributes,namespace) \
-    _GL_WARN_ON_USE_CXX (func, rettype, parameters_and_attributes, \
+    _GL_WARN_ON_USE_CXX (func, rettype, rettype, parameters_and_attributes, \
                          "The symbol ::" #func " refers to the system function. " \
                          "Use " #namespace "::" #func " instead.")
-# elif __GNUC__ >= 3 && GNULIB_STRICT_CHECKING
-#  define _GL_CXXALIASWARN1_2(func,rettype,parameters_and_attributes,namespace) \
-     extern __typeof__ (func) func
 # else
 #  define _GL_CXXALIASWARN1_2(func,rettype,parameters_and_attributes,namespace) \
      _GL_EXTERN_C int _gl_cxxalias_dummy
@@ -371,11 +412,27 @@
 #endif /* _GL_CXXDEFS_H */
 
 /* The definition of _GL_ARG_NONNULL is copied here.  */
+/* A C macro for declaring that specific arguments must not be NULL.
+   Copyright (C) 2009-2021 Free Software Foundation, Inc.
+
+   This program is free software: you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published
+   by the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
+
 /* _GL_ARG_NONNULL((n,...,m)) tells the compiler and static analyzer tools
    that the values passed as arguments n, ..., m must be non-NULL pointers.
    n = 1 stands for the first argument, n = 2 for the second argument etc.  */
 #ifndef _GL_ARG_NONNULL
-# if (__GNUC__ == 3 && __GNUC_MINOR__ >= 3) || __GNUC__ > 3
+# if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3) || defined __clang__
 #  define _GL_ARG_NONNULL(params) __attribute__ ((__nonnull__ params))
 # else
 #  define _GL_ARG_NONNULL(params)
@@ -383,40 +440,143 @@
 #endif
 
 /* The definition of _GL_WARN_ON_USE is copied here.  */
+/* A C macro for emitting warnings if a function is used.
+   Copyright (C) 2010-2021 Free Software Foundation, Inc.
+
+   This program is free software: you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published
+   by the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
+
+/* _GL_WARN_ON_USE (function, "literal string") issues a declaration
+   for FUNCTION which will then trigger a compiler warning containing
+   the text of "literal string" anywhere that function is called, if
+   supported by the compiler.  If the compiler does not support this
+   feature, the macro expands to an unused extern declaration.
+
+   _GL_WARN_ON_USE_ATTRIBUTE ("literal string") expands to the
+   attribute used in _GL_WARN_ON_USE.  If the compiler does not support
+   this feature, it expands to empty.
+
+   These macros are useful for marking a function as a potential
+   portability trap, with the intent that "literal string" include
+   instructions on the replacement function that should be used
+   instead.
+   _GL_WARN_ON_USE is for functions with 'extern' linkage.
+   _GL_WARN_ON_USE_ATTRIBUTE is for functions with 'static' or 'inline'
+   linkage.
+
+   However, one of the reasons that a function is a portability trap is
+   if it has the wrong signature.  Declaring FUNCTION with a different
+   signature in C is a compilation error, so this macro must use the
+   same type as any existing declaration so that programs that avoid
+   the problematic FUNCTION do not fail to compile merely because they
+   included a header that poisoned the function.  But this implies that
+   _GL_WARN_ON_USE is only safe to use if FUNCTION is known to already
+   have a declaration.  Use of this macro implies that there must not
+   be any other macro hiding the declaration of FUNCTION; but
+   undefining FUNCTION first is part of the poisoning process anyway
+   (although for symbols that are provided only via a macro, the result
+   is a compilation error rather than a warning containing
+   "literal string").  Also note that in C++, it is only safe to use if
+   FUNCTION has no overloads.
+
+   For an example, it is possible to poison 'getline' by:
+   - adding a call to gl_WARN_ON_USE_PREPARE([[#include <stdio.h>]],
+     [getline]) in configure.ac, which potentially defines
+     HAVE_RAW_DECL_GETLINE
+   - adding this code to a header that wraps the system <stdio.h>:
+     #undef getline
+     #if HAVE_RAW_DECL_GETLINE
+     _GL_WARN_ON_USE (getline, "getline is required by POSIX 2008, but"
+       "not universally present; use the gnulib module getline");
+     #endif
+
+   It is not possible to directly poison global variables.  But it is
+   possible to write a wrapper accessor function, and poison that
+   (less common usage, like &environ, will cause a compilation error
+   rather than issue the nice warning, but the end result of informing
+   the developer about their portability problem is still achieved):
+     #if HAVE_RAW_DECL_ENVIRON
+     static char ***
+     rpl_environ (void) { return &environ; }
+     _GL_WARN_ON_USE (rpl_environ, "environ is not always properly declared");
+     # undef environ
+     # define environ (*rpl_environ ())
+     #endif
+   or better (avoiding contradictory use of 'static' and 'extern'):
+     #if HAVE_RAW_DECL_ENVIRON
+     static char ***
+     _GL_WARN_ON_USE_ATTRIBUTE ("environ is not always properly declared")
+     rpl_environ (void) { return &environ; }
+     # undef environ
+     # define environ (*rpl_environ ())
+     #endif
+   */
 #ifndef _GL_WARN_ON_USE
 
 # if 4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)
 /* A compiler attribute is available in gcc versions 4.3.0 and later.  */
 #  define _GL_WARN_ON_USE(function, message) \
 extern __typeof__ (function) function __attribute__ ((__warning__ (message)))
+#  define _GL_WARN_ON_USE_ATTRIBUTE(message) \
+  __attribute__ ((__warning__ (message)))
+# elif __clang_major__ >= 4
+/* Another compiler attribute is available in clang.  */
+#  define _GL_WARN_ON_USE(function, message) \
+extern __typeof__ (function) function \
+  __attribute__ ((__diagnose_if__ (1, message, "warning")))
+#  define _GL_WARN_ON_USE_ATTRIBUTE(message) \
+  __attribute__ ((__diagnose_if__ (1, message, "warning")))
 # elif __GNUC__ >= 3 && GNULIB_STRICT_CHECKING
 /* Verify the existence of the function.  */
 #  define _GL_WARN_ON_USE(function, message) \
 extern __typeof__ (function) function
+#  define _GL_WARN_ON_USE_ATTRIBUTE(message)
 # else /* Unsupported.  */
 #  define _GL_WARN_ON_USE(function, message) \
 _GL_WARN_EXTERN_C int _gl_warn_on_use
+#  define _GL_WARN_ON_USE_ATTRIBUTE(message)
 # endif
 #endif
 
-/* _GL_WARN_ON_USE_CXX (function, rettype, parameters_and_attributes, "string")
-   is like _GL_WARN_ON_USE (function, "string"), except that the function is
-   declared with the given prototype, consisting of return type, parameters,
-   and attributes.
+/* _GL_WARN_ON_USE_CXX (function, rettype_gcc, rettype_clang, parameters_and_attributes, "message")
+   is like _GL_WARN_ON_USE (function, "message"), except that in C++ mode the
+   function is declared with the given prototype, consisting of return type,
+   parameters, and attributes.
    This variant is useful for overloaded functions in C++. _GL_WARN_ON_USE does
    not work in this case.  */
 #ifndef _GL_WARN_ON_USE_CXX
-# if 4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)
-#  define _GL_WARN_ON_USE_CXX(function,rettype,parameters_and_attributes,msg) \
-extern rettype function parameters_and_attributes \
-     __attribute__ ((__warning__ (msg)))
-# elif __GNUC__ >= 3 && GNULIB_STRICT_CHECKING
+# if !defined __cplusplus
+#  define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
+     _GL_WARN_ON_USE (function, msg)
+# else
+#  if 4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)
+/* A compiler attribute is available in gcc versions 4.3.0 and later.  */
+#   define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
+extern rettype_gcc function parameters_and_attributes \
+  __attribute__ ((__warning__ (msg)))
+#  elif __clang_major__ >= 4
+/* Another compiler attribute is available in clang.  */
+#   define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
+extern rettype_clang function parameters_and_attributes \
+  __attribute__ ((__diagnose_if__ (1, msg, "warning")))
+#  elif __GNUC__ >= 3 && GNULIB_STRICT_CHECKING
 /* Verify the existence of the function.  */
-#  define _GL_WARN_ON_USE_CXX(function,rettype,parameters_and_attributes,msg) \
-extern rettype function parameters_and_attributes
-# else /* Unsupported.  */
-#  define _GL_WARN_ON_USE_CXX(function,rettype,parameters_and_attributes,msg) \
+#   define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
+extern rettype_gcc function parameters_and_attributes
+#  else /* Unsupported.  */
+#   define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
 _GL_WARN_EXTERN_C int _gl_warn_on_use
+#  endif
 # endif
 #endif
 
@@ -430,6 +590,23 @@ _GL_WARN_EXTERN_C int _gl_warn_on_use
 # endif
 #endif
 
+
+/* Clear a block of memory.  The compiler will not delete a call to
+   this function, even if the block is dead after the call.  */
+#if IN_M4_GNULIB_TESTS
+# if ! 0
+_GL_FUNCDECL_SYS (explicit_bzero, void,
+                  (void *__dest, size_t __n) _GL_ARG_NONNULL ((1)));
+# endif
+_GL_CXXALIAS_SYS (explicit_bzero, void, (void *__dest, size_t __n));
+_GL_CXXALIASWARN (explicit_bzero);
+#elif defined GNULIB_POSIXCHECK
+# undef explicit_bzero
+# if HAVE_RAW_DECL_EXPLICIT_BZERO
+_GL_WARN_ON_USE (explicit_bzero, "explicit_bzero is unportable - "
+                 "use gnulib module explicit_bzero for portability");
+# endif
+#endif
 
 /* Find the index of the least-significant set bit.  */
 #if 0
@@ -448,10 +625,18 @@ _GL_WARN_ON_USE (ffsl, "ffsl is not portable - use the ffsl module");
 
 /* Find the index of the least-significant set bit.  */
 #if 0
-# if !1
+# if 0
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   define ffsll rpl_ffsll
+#  endif
+_GL_FUNCDECL_RPL (ffsll, int, (long long int i));
+_GL_CXXALIAS_RPL (ffsll, int, (long long int i));
+# else
+#  if !1
 _GL_FUNCDECL_SYS (ffsll, int, (long long int i));
-# endif
+#  endif
 _GL_CXXALIAS_SYS (ffsll, int, (long long int i));
+# endif
 _GL_CXXALIASWARN (ffsll);
 #elif defined GNULIB_POSIXCHECK
 # undef ffsll
@@ -461,10 +646,30 @@ _GL_WARN_ON_USE (ffsll, "ffsll is not portable - use the ffsll module");
 #endif
 
 
+#if 1
+/* On native Windows, map 'memccpy' to '_memccpy', so that -loldnames is not
+   required.  In C++ with GNULIB_NAMESPACE, avoid differences between
+   platforms by defining GNULIB_NAMESPACE::memccpy always.  */
+# if defined _WIN32 && !defined __CYGWIN__
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef memccpy
+#   define memccpy _memccpy
+#  endif
+_GL_CXXALIAS_MDA (memccpy, void *,
+                  (void *dest, const void *src, int c, size_t n));
+# else
+_GL_CXXALIAS_SYS (memccpy, void *,
+                  (void *dest, const void *src, int c, size_t n));
+# endif
+_GL_CXXALIASWARN (memccpy);
+#endif
+
+
 /* Return the first instance of C within N bytes of S, or NULL.  */
 #if 1
 # if 0
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef memchr
 #   define memchr rpl_memchr
 #  endif
 _GL_FUNCDECL_RPL (memchr, void *, (void const *__s, int __c, size_t __n)
@@ -472,11 +677,6 @@ _GL_FUNCDECL_RPL (memchr, void *, (void const *__s, int __c, size_t __n)
                                   _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL (memchr, void *, (void const *__s, int __c, size_t __n));
 # else
-#  if ! 1
-_GL_FUNCDECL_SYS (memchr, void *, (void const *__s, int __c, size_t __n)
-                                  _GL_ATTRIBUTE_PURE
-                                  _GL_ARG_NONNULL ((1)));
-#  endif
   /* On some systems, this function is defined as an overloaded function:
        extern "C" { const void * std::memchr (const void *, int, size_t); }
        extern "C++" { void * std::memchr (void *, int, size_t); }  */
@@ -489,7 +689,7 @@ _GL_CXXALIAS_SYS_CAST2 (memchr,
 _GL_CXXALIASWARN1 (memchr, void *, (void *__s, int __c, size_t __n));
 _GL_CXXALIASWARN1 (memchr, void const *,
                    (void const *__s, int __c, size_t __n));
-# else
+# elif __GLIBC__ >= 2
 _GL_CXXALIASWARN (memchr);
 # endif
 #elif defined GNULIB_POSIXCHECK
@@ -537,8 +737,8 @@ _GL_WARN_ON_USE (memmem, "memmem is unportable and often quadratic - "
 
 /* Copy N bytes of SRC to DEST, return pointer to bytes after the
    last written byte.  */
-#if 0
-# if ! 1
+#if 1
+# if ! 0
 _GL_FUNCDECL_SYS (mempcpy, void *,
                   (void *restrict __dest, void const *restrict __src,
                    size_t __n)
@@ -557,8 +757,8 @@ _GL_WARN_ON_USE (mempcpy, "mempcpy is unportable - "
 #endif
 
 /* Search backwards through a block for a byte (specified as an int).  */
-#if 0
-# if ! 1
+#if 1
+# if ! 0
 _GL_FUNCDECL_SYS (memrchr, void *, (void const *, int, size_t)
                                    _GL_ATTRIBUTE_PURE
                                    _GL_ARG_NONNULL ((1)));
@@ -615,7 +815,7 @@ _GL_WARN_ON_USE (rawmemchr, "rawmemchr is unportable - "
 #endif
 
 /* Copy SRC to DST, returning the address of the terminating '\0' in DST.  */
-#if 0
+#if 1
 # if ! 1
 _GL_FUNCDECL_SYS (stpcpy, char *,
                   (char *restrict __dst, char const *restrict __src)
@@ -672,9 +872,11 @@ _GL_WARN_ON_USE (stpncpy, "stpncpy is unportable - "
    GB18030 and the character to be searched is a digit.  */
 # undef strchr
 /* Assume strchr is always declared.  */
-_GL_WARN_ON_USE (strchr, "strchr cannot work correctly on character strings "
-                 "in some multibyte locales - "
-                 "use mbschr if you care about internationalization");
+_GL_WARN_ON_USE_CXX (strchr,
+                     const char *, char *, (const char *, int),
+                     "strchr cannot work correctly on character strings "
+                     "in some multibyte locales - "
+                     "use mbschr if you care about internationalization");
 #endif
 
 /* Find the first occurrence of C in S or the final NUL byte.  */
@@ -717,7 +919,7 @@ _GL_WARN_ON_USE (strchrnul, "strchrnul is unportable - "
 #endif
 
 /* Duplicate S, returning an identical malloc'd string.  */
-#if IN_M4_GNULIB_TESTS
+#if 1
 # if 0
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef strdup
@@ -725,6 +927,12 @@ _GL_WARN_ON_USE (strchrnul, "strchrnul is unportable - "
 #  endif
 _GL_FUNCDECL_RPL (strdup, char *, (char const *__s) _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL (strdup, char *, (char const *__s));
+# elif defined _WIN32 && !defined __CYGWIN__
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef strdup
+#   define strdup _strdup
+#  endif
+_GL_CXXALIAS_MDA (strdup, char *, (char const *__s));
 # else
 #  if defined __cplusplus && defined GNULIB_NAMESPACE && defined strdup
     /* strdup exists as a function and as a macro.  Get rid of the macro.  */
@@ -742,6 +950,23 @@ _GL_CXXALIASWARN (strdup);
 _GL_WARN_ON_USE (strdup, "strdup is unportable - "
                  "use gnulib module strdup for portability");
 # endif
+#elif 1
+/* On native Windows, map 'creat' to '_creat', so that -loldnames is not
+   required.  In C++ with GNULIB_NAMESPACE, avoid differences between
+   platforms by defining GNULIB_NAMESPACE::creat always.  */
+# if defined _WIN32 && !defined __CYGWIN__
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef strdup
+#   define strdup _strdup
+#  endif
+_GL_CXXALIAS_MDA (strdup, char *, (char const *__s));
+# else
+#  if defined __cplusplus && defined GNULIB_NAMESPACE && defined strdup
+#   undef strdup
+#  endif
+_GL_CXXALIAS_SYS (strdup, char *, (char const *__s));
+# endif
+_GL_CXXALIASWARN (strdup);
 #endif
 
 /* Append no more than N characters from SRC onto DEST.  */
@@ -751,13 +976,18 @@ _GL_WARN_ON_USE (strdup, "strdup is unportable - "
 #   undef strncat
 #   define strncat rpl_strncat
 #  endif
-_GL_FUNCDECL_RPL (strncat, char *, (char *dest, const char *src, size_t n)
-                                   _GL_ARG_NONNULL ((1, 2)));
-_GL_CXXALIAS_RPL (strncat, char *, (char *dest, const char *src, size_t n));
+_GL_FUNCDECL_RPL (strncat, char *,
+                  (char *restrict dest, const char *restrict src, size_t n)
+                  _GL_ARG_NONNULL ((1, 2)));
+_GL_CXXALIAS_RPL (strncat, char *,
+                  (char *restrict dest, const char *restrict src, size_t n));
 # else
-_GL_CXXALIAS_SYS (strncat, char *, (char *dest, const char *src, size_t n));
+_GL_CXXALIAS_SYS (strncat, char *,
+                  (char *restrict dest, const char *restrict src, size_t n));
 # endif
+# if __GLIBC__ >= 2
 _GL_CXXALIASWARN (strncat);
+# endif
 #elif defined GNULIB_POSIXCHECK
 # undef strncat
 # if HAVE_RAW_DECL_STRNCAT
@@ -852,7 +1082,7 @@ _GL_CXXALIAS_SYS_CAST2 (strpbrk,
 _GL_CXXALIASWARN1 (strpbrk, char *, (char *__s, char const *__accept));
 _GL_CXXALIASWARN1 (strpbrk, char const *,
                    (char const *__s, char const *__accept));
-# else
+# elif __GLIBC__ >= 2
 _GL_CXXALIASWARN (strpbrk);
 # endif
 # if defined GNULIB_POSIXCHECK
@@ -861,15 +1091,19 @@ _GL_CXXALIASWARN (strpbrk);
    locale encoding is GB18030 and one of the characters to be searched is a
    digit.  */
 #  undef strpbrk
-_GL_WARN_ON_USE (strpbrk, "strpbrk cannot work correctly on character strings "
-                 "in multibyte locales - "
-                 "use mbspbrk if you care about internationalization");
+_GL_WARN_ON_USE_CXX (strpbrk,
+                     const char *, char *, (const char *, const char *),
+                     "strpbrk cannot work correctly on character strings "
+                     "in multibyte locales - "
+                     "use mbspbrk if you care about internationalization");
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef strpbrk
 # if HAVE_RAW_DECL_STRPBRK
-_GL_WARN_ON_USE (strpbrk, "strpbrk is unportable - "
-                 "use gnulib module strpbrk for portability");
+_GL_WARN_ON_USE_CXX (strpbrk,
+                     const char *, char *, (const char *, const char *),
+                     "strpbrk is unportable - "
+                     "use gnulib module strpbrk for portability");
 # endif
 #endif
 
@@ -888,9 +1122,11 @@ _GL_WARN_ON_USE (strspn, "strspn cannot work correctly on character strings "
    GB18030 and the character to be searched is a digit.  */
 # undef strrchr
 /* Assume strrchr is always declared.  */
-_GL_WARN_ON_USE (strrchr, "strrchr cannot work correctly on character strings "
-                 "in some multibyte locales - "
-                 "use mbsrchr if you care about internationalization");
+_GL_WARN_ON_USE_CXX (strrchr,
+                     const char *, char *, (const char *, int),
+                     "strrchr cannot work correctly on character strings "
+                     "in some multibyte locales - "
+                     "use mbsrchr if you care about internationalization");
 #endif
 
 /* Search the next delimiter (char listed in DELIM) starting at *STRINGP.
@@ -954,7 +1190,7 @@ _GL_CXXALIAS_SYS_CAST2 (strstr,
 _GL_CXXALIASWARN1 (strstr, char *, (char *haystack, const char *needle));
 _GL_CXXALIASWARN1 (strstr, const char *,
                    (const char *haystack, const char *needle));
-# else
+# elif __GLIBC__ >= 2
 _GL_CXXALIASWARN (strstr);
 # endif
 #elif defined GNULIB_POSIXCHECK
@@ -1033,7 +1269,7 @@ _GL_WARN_ON_USE (strcasestr, "strcasestr does work correctly on character "
    This is a variant of strtok() that is multithread-safe.
 
    For the POSIX documentation for this function, see:
-   http://www.opengroup.org/susv3xsh/strtok.html
+   https://pubs.opengroup.org/onlinepubs/9699919799/functions/strtok.html
 
    Caveat: It modifies the original string.
    Caveat: These functions cannot be used on constant strings.
@@ -1087,7 +1323,7 @@ _GL_WARN_ON_USE (strtok_r, "strtok_r is unportable - "
 /* The following functions are not specified by POSIX.  They are gnulib
    extensions.  */
 
-#if 0
+#if 1
 /* Return the number of multibyte characters in the character string STRING.
    This considers multibyte characters, unlike strlen, which counts bytes.  */
 # ifdef __MirBSD__  /* MirBSD defines mbslen as a macro.  Override it.  */
@@ -1162,7 +1398,7 @@ _GL_CXXALIAS_SYS (mbsrchr, char *, (const char *string, int c));
 _GL_CXXALIASWARN (mbsrchr);
 #endif
 
-#if 0
+#if 1
 /* Find the first occurrence of the character string NEEDLE in the character
    string HAYSTACK.  Return NULL if NEEDLE is not found in HAYSTACK.
    Unlike strstr(), this function works correctly in multibyte locales with
@@ -1304,7 +1540,8 @@ _GL_EXTERN_C char * mbssep (char **stringp, const char *delim)
    Caveat: The identity of the delimiting character is lost.
 
    See also mbssep().  */
-_GL_EXTERN_C char * mbstok_r (char *string, const char *delim, char **save_ptr)
+_GL_EXTERN_C char * mbstok_r (char *restrict string, const char *delim,
+                              char **save_ptr)
      _GL_ARG_NONNULL ((2, 3));
 #endif
 
@@ -1320,7 +1557,9 @@ _GL_CXXALIAS_RPL (strerror, char *, (int));
 # else
 _GL_CXXALIAS_SYS (strerror, char *, (int));
 # endif
+# if __GLIBC__ >= 2
 _GL_CXXALIASWARN (strerror);
+# endif
 #elif defined GNULIB_POSIXCHECK
 # undef strerror
 /* Assume strerror is always declared.  */
@@ -1330,8 +1569,8 @@ _GL_WARN_ON_USE (strerror, "strerror is unportable - "
 
 /* Map any int, typically from errno, into an error message.  Multithread-safe.
    Uses the POSIX declaration, not the glibc declaration.  */
-#if 0
-# if 0
+#if IN_M4_GNULIB_TESTS
+# if 1
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef strerror_r
 #   define strerror_r rpl_strerror_r
@@ -1354,6 +1593,60 @@ _GL_CXXALIASWARN (strerror_r);
 # if HAVE_RAW_DECL_STRERROR_R
 _GL_WARN_ON_USE (strerror_r, "strerror_r is unportable - "
                  "use gnulib module strerror_r-posix for portability");
+# endif
+#endif
+
+/* Return the name of the system error code ERRNUM.  */
+#if 0
+# if 0
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef strerrorname_np
+#   define strerrorname_np rpl_strerrorname_np
+#  endif
+_GL_FUNCDECL_RPL (strerrorname_np, const char *, (int errnum));
+_GL_CXXALIAS_RPL (strerrorname_np, const char *, (int errnum));
+# else
+#  if !1
+_GL_FUNCDECL_SYS (strerrorname_np, const char *, (int errnum));
+#  endif
+_GL_CXXALIAS_SYS (strerrorname_np, const char *, (int errnum));
+# endif
+_GL_CXXALIASWARN (strerrorname_np);
+#elif defined GNULIB_POSIXCHECK
+# undef strerrorname_np
+# if HAVE_RAW_DECL_STRERRORNAME_NP
+_GL_WARN_ON_USE (strerrorname_np, "strerrorname_np is unportable - "
+                 "use gnulib module strerrorname_np for portability");
+# endif
+#endif
+
+/* Return an abbreviation string for the signal number SIG.  */
+#if 0
+# if ! 1
+_GL_FUNCDECL_SYS (sigabbrev_np, const char *, (int sig));
+# endif
+_GL_CXXALIAS_SYS (sigabbrev_np, const char *, (int sig));
+_GL_CXXALIASWARN (sigabbrev_np);
+#elif defined GNULIB_POSIXCHECK
+# undef sigabbrev_np
+# if HAVE_RAW_DECL_SIGABBREV_NP
+_GL_WARN_ON_USE (sigabbrev_np, "sigabbrev_np is unportable - "
+                 "use gnulib module sigabbrev_np for portability");
+# endif
+#endif
+
+/* Return an English description string for the signal number SIG.  */
+#if 0
+# if ! 1
+_GL_FUNCDECL_SYS (sigdescr_np, const char *, (int sig));
+# endif
+_GL_CXXALIAS_SYS (sigdescr_np, const char *, (int sig));
+_GL_CXXALIASWARN (sigdescr_np);
+#elif defined GNULIB_POSIXCHECK
+# undef sigdescr_np
+# if HAVE_RAW_DECL_SIGDESCR_NP
+_GL_WARN_ON_USE (sigdescr_np, "sigdescr_np is unportable - "
+                 "use gnulib module sigdescr_np for portability");
 # endif
 #endif
 

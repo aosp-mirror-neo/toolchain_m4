@@ -1,4 +1,7 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#if HAVE_WINSOCK2_H
+# include <winsock2.h> /* avoid mingw pollution on DATADIR */
+#endif
 #define PREFIX "/usr/local"
 #define EXEC_PREFIX "/usr/local"
 #define BINDIR "/usr/local/bin"
