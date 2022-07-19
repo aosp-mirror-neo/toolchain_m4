@@ -94,9 +94,7 @@ cc_defaults {
 END
 ${ANDROID_BUILD_TOP}/prebuilts/build-tools/$UNAME-x86/bin/bpfmt -w ../Android.bp
 
-if [ $DIR = "darwin" ]; then
-  sed -ibak 's%#define __x86_64__ 1%/* compiler-set */%' lib/config.h
-fi
+sed -ibak 's%#define __x86_64__ 1%/* compiler-set */%' lib/config.h
 
 cd lib
 find . -name '*.h' | xargs -IX cp X ../../X

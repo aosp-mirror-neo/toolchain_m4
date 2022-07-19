@@ -9,7 +9,7 @@
 /* #undef __x86_64_x32__ */
 #endif
 #ifndef __x86_64__
-#define __x86_64__ 1
+/* compiler-set */
 #endif
 #ifndef __alpha__
 /* #undef __alpha__ */
