@@ -20,7 +20,10 @@ cc_binary_host {
         "m4_musl_defaults",
     ],
 
-    cflags: ["-Wno-unused-parameter"],
+    cflags: [
+        "-U_FORTIFY_SOURCE",
+        "-Wno-unused-parameter",
+    ],
     c_std: "c17",
     stl: "none",
 
