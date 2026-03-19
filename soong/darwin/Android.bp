@@ -167,7 +167,6 @@ cc_defaults {
                 "lib/version-etc.c",
                 "lib/wait-process.c",
                 "lib/wctype-h.c",
-                "lib/wcwidth.c",
                 "lib/xalloc-die.c",
                 "lib/xasprintf.c",
                 "lib/xmalloc.c",

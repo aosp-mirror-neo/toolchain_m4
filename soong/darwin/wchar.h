@@ -1002,7 +1002,7 @@ _GL_WARN_ON_USE (wcsnrtombs, "wcsnrtombs is unportable - "
 
 /* Return the number of screen columns needed for WC.  */
 #if 1
-# if 1
+# if 0
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef wcwidth
 #   define wcwidth rpl_wcwidth
