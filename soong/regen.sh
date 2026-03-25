@@ -52,6 +52,10 @@ elif [ $DIR = "darwin" ]; then
   config_opts+=("ac_cv_func_vfork=no")
   # we'd need to link to libiconv
   config_opts+=("am_cv_func_iconv=no")
+  # for old mac os versions, could probably remove after updating our CI
+  config_opts+=("ac_cv_func_strchrnul=no")
+  config_opts+=("gl_cv_func_getcwd_path_max=no, but it is partly working")
+  config_opts+=("gl_cv_func_ungetc_works=no")
 fi
 
 rm -rf $DIR

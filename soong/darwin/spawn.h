@@ -1426,7 +1426,7 @@ _GL_WARN_ON_USE (posix_spawn_file_actions_adddup2,
 #if 1
 /* Add an action to FILE-ACTIONS which tells the implementation to call
    'chdir' to the given directory during the 'spawn' call.  */
-# if 0
+# if 1
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   define posix_spawn_file_actions_addchdir rpl_posix_spawn_file_actions_addchdir
 #  endif
@@ -1438,7 +1438,7 @@ _GL_CXXALIAS_RPL (posix_spawn_file_actions_addchdir, int,
                   (posix_spawn_file_actions_t *_Restrict_ __file_actions,
                    const char *_Restrict_ __path));
 # else
-#  if !0
+#  if !1
 _GL_FUNCDECL_SYS (posix_spawn_file_actions_addchdir, int,
                   (posix_spawn_file_actions_t *_Restrict_ __file_actions,
                    const char *_Restrict_ __path)
