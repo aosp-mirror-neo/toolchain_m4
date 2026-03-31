@@ -23,8 +23,9 @@ cc_binary_host {
     cflags: [
         "-U_FORTIFY_SOURCE",
         "-Wno-unused-parameter",
+        "-Wno-format-security",
     ],
-    c_std: "c17",
+    c_std: "c23",
     stl: "none",
 
     local_include_dirs: [

@@ -1,20 +1,20 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* A substitute for ISO C99 <wctype.h>, for platforms that lack it.
 
-   Copyright (C) 2006-2021 Free Software Foundation, Inc.
+   Copyright (C) 2006-2026 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3, or (at your option)
-   any later version.
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, see <https://www.gnu.org/licenses/>.  */
+   You should have received a copy of the GNU Lesser General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* Written by Bruno Haible and Paul Eggert.  */
 
@@ -45,6 +45,12 @@
 
 #ifndef _GL_M4_WCTYPE_H
 
+/* This file uses _GL_INLINE_HEADER_BEGIN, _GL_INLINE, GNULIB_POSIXCHECK,
+   HAVE_RAW_DECL_*.  */
+#if !_GL_CONFIG_H_INCLUDED
+ #error "Please include config.h first."
+#endif
+
 #if 1
 /* Solaris 2.5 has a bug: <wchar.h> must be included before <wctype.h>.  */
 # include <wchar.h>
@@ -69,9 +75,6 @@
 #ifndef _GL_M4_WCTYPE_H
 #define _GL_M4_WCTYPE_H
 
-#ifndef _GL_INLINE_HEADER_BEGIN
- #error "Please include config.h first."
-#endif
 _GL_INLINE_HEADER_BEGIN
 #ifndef _GL_WCTYPE_INLINE
 # define _GL_WCTYPE_INLINE _GL_INLINE
@@ -79,19 +82,19 @@ _GL_INLINE_HEADER_BEGIN
 
 /* The definitions of _GL_FUNCDECL_RPL etc. are copied here.  */
 /* C++ compatible function declaration macros.
-   Copyright (C) 2010-2021 Free Software Foundation, Inc.
+   Copyright (C) 2010-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published
-   by the Free Software Foundation; either version 3 of the License, or
+   under the terms of the GNU Lesser General Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef _GL_CXXDEFS_H
@@ -173,27 +176,63 @@ _GL_INLINE_HEADER_BEGIN
 # define _GL_EXTERN_C extern
 #endif
 
-/* _GL_FUNCDECL_RPL (func, rettype, parameters_and_attributes);
+/* _GL_EXTERN_C_FUNC declaration;
+   performs the declaration of a function with C linkage.  */
+#if defined __cplusplus
+# define _GL_EXTERN_C_FUNC extern "C"
+#else
+/* In C mode, omit the 'extern' keyword, because attributes in bracket syntax
+   are not allowed between 'extern' and the return type (see gnulib-common.m4).
+ */
+# define _GL_EXTERN_C_FUNC
+#endif
+
+/* _GL_FUNCDECL_RPL (func, rettype, parameters, [attributes]);
    declares a replacement function, named rpl_func, with the given prototype,
    consisting of return type, parameters, and attributes.
-   Example:
-     _GL_FUNCDECL_RPL (open, int, (const char *filename, int flags, ...)
+   Although attributes are optional, the comma before them is required
+   for portability to C17 and earlier.  The attribute _GL_ATTRIBUTE_NOTHROW,
+   if needed, must be placed after the _GL_FUNCDECL_RPL invocation,
+   at the end of the declaration.
+   Examples:
+     _GL_FUNCDECL_RPL (free, void, (void *ptr), ) _GL_ATTRIBUTE_NOTHROW;
+     _GL_FUNCDECL_RPL (open, int, (const char *filename, int flags, ...),
                                   _GL_ARG_NONNULL ((1)));
- */
-#define _GL_FUNCDECL_RPL(func,rettype,parameters_and_attributes) \
-  _GL_FUNCDECL_RPL_1 (rpl_##func, rettype, parameters_and_attributes)
-#define _GL_FUNCDECL_RPL_1(rpl_func,rettype,parameters_and_attributes) \
-  _GL_EXTERN_C rettype rpl_func parameters_and_attributes
 
-/* _GL_FUNCDECL_SYS (func, rettype, parameters_and_attributes);
+   Note: Attributes, such as _GL_ATTRIBUTE_DEPRECATED, are supported in front
+   of a _GL_FUNCDECL_RPL invocation only in C mode, not in C++ mode.  (That's
+   because
+     [[...]] extern "C" <declaration>;
+   is invalid syntax in C++.)
+ */
+#define _GL_FUNCDECL_RPL(func,rettype,parameters,...) \
+  _GL_FUNCDECL_RPL_1 (rpl_##func, rettype, parameters, __VA_ARGS__)
+#define _GL_FUNCDECL_RPL_1(rpl_func,rettype,parameters,...) \
+  _GL_EXTERN_C_FUNC __VA_ARGS__ rettype rpl_func parameters
+
+/* _GL_FUNCDECL_SYS_NAME (func) expands to plain func if C++, and to
+   parenthesized func otherwise.  Parenthesization is needed in C23 if
+   the function is like strchr and so is a qualifier-generic macro
+   that expands to something more complicated.  */
+#ifdef __cplusplus
+# define _GL_FUNCDECL_SYS_NAME(func) func
+#else
+# define _GL_FUNCDECL_SYS_NAME(func) (func)
+#endif
+
+/* _GL_FUNCDECL_SYS (func, rettype, parameters, [attributes]);
    declares the system function, named func, with the given prototype,
    consisting of return type, parameters, and attributes.
-   Example:
-     _GL_FUNCDECL_SYS (open, int, (const char *filename, int flags, ...)
-                                  _GL_ARG_NONNULL ((1)));
+   Although attributes are optional, the comma before them is required
+   for portability to C17 and earlier.  The attribute _GL_ATTRIBUTE_NOTHROW,
+   if needed, must be placed after the _GL_FUNCDECL_RPL invocation,
+   at the end of the declaration.
+   Examples:
+     _GL_FUNCDECL_SYS (getumask, mode_t, (void), ) _GL_ATTRIBUTE_NOTHROW;
+     _GL_FUNCDECL_SYS (posix_openpt, int, (int flags), _GL_ATTRIBUTE_NODISCARD);
  */
-#define _GL_FUNCDECL_SYS(func,rettype,parameters_and_attributes) \
-  _GL_EXTERN_C rettype func parameters_and_attributes
+#define _GL_FUNCDECL_SYS(func,rettype,parameters,...) \
+  _GL_EXTERN_C_FUNC __VA_ARGS__ rettype _GL_FUNCDECL_SYS_NAME (func) parameters
 
 /* _GL_CXXALIAS_RPL (func, rettype, parameters);
    declares a C++ alias called GNULIB_NAMESPACE::func
@@ -364,14 +403,14 @@ _GL_INLINE_HEADER_BEGIN
    _GL_CXXALIASWARN_1 (func, GNULIB_NAMESPACE)
 # define _GL_CXXALIASWARN_1(func,namespace) \
    _GL_CXXALIASWARN_2 (func, namespace)
-/* To work around GCC bug <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=43881>,
+/* To work around GCC bug <https://gcc.gnu.org/PR43881>,
    we enable the warning only when not optimizing.  */
 # if !(defined __GNUC__ && !defined __clang__ && __OPTIMIZE__)
 #  define _GL_CXXALIASWARN_2(func,namespace) \
     _GL_WARN_ON_USE (func, \
                      "The symbol ::" #func " refers to the system function. " \
                      "Use " #namespace "::" #func " instead.")
-# elif __GNUC__ >= 3 && GNULIB_STRICT_CHECKING
+# elif (__GNUC__ >= 3 || defined __clang__) && GNULIB_STRICT_CHECKING
 #  define _GL_CXXALIASWARN_2(func,namespace) \
      extern __typeof__ (func) func
 # else
@@ -392,7 +431,7 @@ _GL_INLINE_HEADER_BEGIN
                         GNULIB_NAMESPACE)
 # define _GL_CXXALIASWARN1_1(func,rettype,parameters_and_attributes,namespace) \
    _GL_CXXALIASWARN1_2 (func, rettype, parameters_and_attributes, namespace)
-/* To work around GCC bug <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=43881>,
+/* To work around GCC bug <https://gcc.gnu.org/PR43881>,
    we enable the warning only when not optimizing.  */
 # if !(defined __GNUC__ && !defined __clang__ && __OPTIMIZE__)
 #  define _GL_CXXALIASWARN1_2(func,rettype,parameters_and_attributes,namespace) \
@@ -410,21 +449,49 @@ _GL_INLINE_HEADER_BEGIN
 
 #endif /* _GL_CXXDEFS_H */
 
-/* The definition of _GL_WARN_ON_USE is copied here.  */
-/* A C macro for emitting warnings if a function is used.
-   Copyright (C) 2010-2021 Free Software Foundation, Inc.
+/* The definition of _GL_ARG_NONNULL is copied here.  */
+/* A C macro for declaring that specific arguments must not be NULL.
+   Copyright (C) 2009-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published
-   by the Free Software Foundation; either version 3 of the License, or
+   under the terms of the GNU Lesser General Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
+
+/* _GL_ARG_NONNULL((n,...,m)) tells the compiler and static analyzer tools
+   that the values passed as arguments n, ..., m must be non-NULL pointers.
+   n = 1 stands for the first argument, n = 2 for the second argument etc.  */
+#ifndef _GL_ARG_NONNULL
+# if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3) || defined __clang__
+#  define _GL_ARG_NONNULL(params) __attribute__ ((__nonnull__ params))
+# else
+#  define _GL_ARG_NONNULL(params)
+# endif
+#endif
+
+/* The definition of _GL_WARN_ON_USE is copied here.  */
+/* A C macro for emitting warnings if a function is used.
+   Copyright (C) 2010-2026 Free Software Foundation, Inc.
+
+   This program is free software: you can redistribute it and/or modify it
+   under the terms of the GNU Lesser General Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* _GL_WARN_ON_USE (function, "literal string") issues a declaration
@@ -444,6 +511,10 @@ _GL_INLINE_HEADER_BEGIN
    _GL_WARN_ON_USE is for functions with 'extern' linkage.
    _GL_WARN_ON_USE_ATTRIBUTE is for functions with 'static' or 'inline'
    linkage.
+
+   _GL_WARN_ON_USE should not be used more than once for a given function
+   in a given compilation unit (because this may generate a warning even
+   if the function is never called).
 
    However, one of the reasons that a function is a portability trap is
    if it has the wrong signature.  Declaring FUNCTION with a different
@@ -494,23 +565,23 @@ _GL_INLINE_HEADER_BEGIN
    */
 #ifndef _GL_WARN_ON_USE
 
-# if 4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)
+# if (4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)) && !defined __clang__
 /* A compiler attribute is available in gcc versions 4.3.0 and later.  */
 #  define _GL_WARN_ON_USE(function, message) \
-extern __typeof__ (function) function __attribute__ ((__warning__ (message)))
+_GL_WARN_EXTERN_C __typeof__ (function) function __attribute__ ((__warning__ (message)))
 #  define _GL_WARN_ON_USE_ATTRIBUTE(message) \
   __attribute__ ((__warning__ (message)))
 # elif __clang_major__ >= 4
 /* Another compiler attribute is available in clang.  */
 #  define _GL_WARN_ON_USE(function, message) \
-extern __typeof__ (function) function \
+_GL_WARN_EXTERN_C __typeof__ (function) function \
   __attribute__ ((__diagnose_if__ (1, message, "warning")))
 #  define _GL_WARN_ON_USE_ATTRIBUTE(message) \
   __attribute__ ((__diagnose_if__ (1, message, "warning")))
-# elif __GNUC__ >= 3 && GNULIB_STRICT_CHECKING
+# elif (__GNUC__ >= 3 || defined __clang__) && GNULIB_STRICT_CHECKING
 /* Verify the existence of the function.  */
 #  define _GL_WARN_ON_USE(function, message) \
-extern __typeof__ (function) function
+_GL_WARN_EXTERN_C __typeof__ (function) function
 #  define _GL_WARN_ON_USE_ATTRIBUTE(message)
 # else /* Unsupported.  */
 #  define _GL_WARN_ON_USE(function, message) \
@@ -530,7 +601,7 @@ _GL_WARN_EXTERN_C int _gl_warn_on_use
 #  define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
      _GL_WARN_ON_USE (function, msg)
 # else
-#  if 4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)
+#  if (4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)) && !defined __clang__
 /* A compiler attribute is available in gcc versions 4.3.0 and later.  */
 #   define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
 extern rettype_gcc function parameters_and_attributes \
@@ -540,7 +611,7 @@ extern rettype_gcc function parameters_and_attributes \
 #   define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
 extern rettype_clang function parameters_and_attributes \
   __attribute__ ((__diagnose_if__ (1, msg, "warning")))
-#  elif __GNUC__ >= 3 && GNULIB_STRICT_CHECKING
+#  elif (__GNUC__ >= 3 || defined __clang__) && GNULIB_STRICT_CHECKING
 /* Verify the existence of the function.  */
 #   define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
 extern rettype_gcc function parameters_and_attributes
@@ -608,7 +679,8 @@ typedef unsigned int rpl_wint_t;
 /* FreeBSD 4.4 to 4.11 has <wctype.h> but lacks the functions.
    Linux libc5 has <wctype.h> and the functions but they are broken.
    mingw and MSVC have <wctype.h> and the functions but they take a wchar_t
-   as argument, not an rpl_wint_t.
+   as argument, not an rpl_wint_t.  Additionally, the mingw iswprint function
+   and the Android iswpunct function are broken.
    Assume all 11 functions (all isw* except iswblank) are implemented the
    same way, or not at all.  */
 # if ! 1 || 0
@@ -660,7 +732,11 @@ rpl_iswlower (wint_t wc)
 _GL_WCTYPE_INLINE int
 rpl_iswprint (wint_t wc)
 {
+#   ifdef __MINGW32__
+  return ((wchar_t) wc == wc ? wc == ' ' || iswgraph ((wchar_t) wc) : 0);
+#   else
   return ((wchar_t) wc == wc ? iswprint ((wchar_t) wc) : 0);
+#   endif
 }
 
 _GL_WCTYPE_INLINE int
@@ -735,27 +811,7 @@ rpl_towupper (wint_t wc)
 
 #  else
 
-/* IRIX 5.3 has macros but no functions, its isw* macros refer to an
-   undefined variable _ctmp_ and to <ctype.h> macros like _P, and they
-   refer to system functions like _iswctype that are not in the
-   standard C library.  Rather than try to get ancient buggy
-   implementations like this to work, just disable them.  */
-#   undef iswalnum
-#   undef iswalpha
-#   undef iswblank
-#   undef iswcntrl
-#   undef iswdigit
-#   undef iswgraph
-#   undef iswlower
-#   undef iswprint
-#   undef iswpunct
-#   undef iswspace
-#   undef iswupper
-#   undef iswxdigit
-#   undef towlower
-#   undef towupper
-
-/* Linux libc5 has <wctype.h> and the functions but they are broken.  */
+/* On some old platforms the functions are broken.  */
 #   if 0
 #    if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #     define iswalnum rpl_iswalnum
@@ -949,9 +1005,9 @@ towupper
 #    if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #     define iswblank rpl_iswblank
 #    endif
-_GL_FUNCDECL_RPL (iswblank, int, (wint_t wc));
+_GL_FUNCDECL_RPL (iswblank, int, (wint_t wc), );
 #   else
-_GL_FUNCDECL_SYS (iswblank, int, (wint_t wc));
+_GL_FUNCDECL_SYS (iswblank, int, (wint_t wc), );
 #   endif
 #  endif
 
@@ -961,7 +1017,17 @@ _GL_FUNCDECL_SYS (iswblank, int, (wint_t wc));
 #     undef iswdigit
 #     define iswdigit rpl_iswdigit
 #    endif
-_GL_FUNCDECL_RPL (iswdigit, int, (wint_t wc));
+_GL_FUNCDECL_RPL (iswdigit, int, (wint_t wc), );
+#   endif
+#  endif
+
+#  if 1
+#   if 0
+#    if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#     undef iswpunct
+#     define iswpunct rpl_iswpunct
+#    endif
+_GL_FUNCDECL_RPL (iswpunct, int, (wint_t wc), );
 #   endif
 #  endif
 
@@ -971,7 +1037,7 @@ _GL_FUNCDECL_RPL (iswdigit, int, (wint_t wc));
 #     undef iswxdigit
 #     define iswxdigit rpl_iswxdigit
 #    endif
-_GL_FUNCDECL_RPL (iswxdigit, int, (wint_t wc));
+_GL_FUNCDECL_RPL (iswxdigit, int, (wint_t wc), );
 #   endif
 #  endif
 
@@ -1104,19 +1170,36 @@ _GL_CXXALIASWARN (iswblank);
 typedef void * wctype_t;
 #  define GNULIB_defined_wctype_t 1
 # endif
+#elif 0
+# if !GNULIB_defined_wctype_t
+typedef void *rpl_wctype_t;
+#  undef wctype_t
+#  define wctype_t rpl_wctype_t
+#  define GNULIB_defined_wctype_t 1
+# endif
 #endif
 
 /* Get a descriptor for a wide character property.  */
-#if 0
-# if !1
-_GL_FUNCDECL_SYS (wctype, wctype_t, (const char *name));
-# endif
+#if 1
+# if 0
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef wctype
+#   define wctype rpl_wctype
+#  endif
+_GL_FUNCDECL_RPL (wctype, wctype_t, (const char *name),
+                                    _GL_ARG_NONNULL ((1)));
+_GL_CXXALIAS_RPL (wctype, wctype_t, (const char *name));
+# else
+#  if !1
+_GL_FUNCDECL_SYS (wctype, wctype_t, (const char *name),
+                                    _GL_ARG_NONNULL ((1)));
+#  endif
 _GL_CXXALIAS_SYS (wctype, wctype_t, (const char *name));
+# endif
 # if __GLIBC__ >= 2
 _GL_CXXALIASWARN (wctype);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef wctype
 # if HAVE_RAW_DECL_WCTYPE
 _GL_WARN_ON_USE (wctype, "wctype is unportable - "
                  "use gnulib module wctype for portability");
@@ -1126,17 +1209,17 @@ _GL_WARN_ON_USE (wctype, "wctype is unportable - "
 /* Test whether a wide character has a given property.
    The argument WC must be either a wchar_t value or WEOF.
    The argument DESC must have been returned by the wctype() function.  */
-#if 0
-# if 0
+#if 1
+# if 0 || 0
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef iswctype
 #   define iswctype rpl_iswctype
 #  endif
-_GL_FUNCDECL_RPL (iswctype, int, (wint_t wc, wctype_t desc));
+_GL_FUNCDECL_RPL (iswctype, int, (wint_t wc, wctype_t desc), );
 _GL_CXXALIAS_RPL (iswctype, int, (wint_t wc, wctype_t desc));
 # else
 #  if !1
-_GL_FUNCDECL_SYS (iswctype, int, (wint_t wc, wctype_t desc));
+_GL_FUNCDECL_SYS (iswctype, int, (wint_t wc, wctype_t desc), );
 #  endif
 _GL_CXXALIAS_SYS (iswctype, int, (wint_t wc, wctype_t desc));
 # endif
@@ -1144,7 +1227,6 @@ _GL_CXXALIAS_SYS (iswctype, int, (wint_t wc, wctype_t desc));
 _GL_CXXALIASWARN (iswctype);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef iswctype
 # if HAVE_RAW_DECL_ISWCTYPE
 _GL_WARN_ON_USE (iswctype, "iswctype is unportable - "
                  "use gnulib module iswctype for portability");
@@ -1168,19 +1250,36 @@ _GL_CXXALIASWARN (towupper);
 typedef void * wctrans_t;
 #  define GNULIB_defined_wctrans_t 1
 # endif
+#elif 0
+# if !GNULIB_defined_wctrans_t
+typedef void *rpl_wctrans_t;
+#  undef wctrans_t
+#  define wctrans_t rpl_wctrans_t
+#  define GNULIB_defined_wctrans_t 1
+# endif
 #endif
 
 /* Get a descriptor for a wide character case conversion.  */
 #if 0
-# if !1
-_GL_FUNCDECL_SYS (wctrans, wctrans_t, (const char *name));
-# endif
+# if 0
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef wctrans
+#   define wctrans rpl_wctrans
+#  endif
+_GL_FUNCDECL_RPL (wctrans, wctrans_t, (const char *name),
+                                      _GL_ARG_NONNULL ((1)));
+_GL_CXXALIAS_RPL (wctrans, wctrans_t, (const char *name));
+# else
+#  if !1
+_GL_FUNCDECL_SYS (wctrans, wctrans_t, (const char *name),
+                                      _GL_ARG_NONNULL ((1)));
+#  endif
 _GL_CXXALIAS_SYS (wctrans, wctrans_t, (const char *name));
+# endif
 # if __GLIBC__ >= 2
 _GL_CXXALIASWARN (wctrans);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef wctrans
 # if HAVE_RAW_DECL_WCTRANS
 _GL_WARN_ON_USE (wctrans, "wctrans is unportable - "
                  "use gnulib module wctrans for portability");
@@ -1191,15 +1290,23 @@ _GL_WARN_ON_USE (wctrans, "wctrans is unportable - "
    The argument WC must be either a wchar_t value or WEOF.
    The argument DESC must have been returned by the wctrans() function.  */
 #if 0
-# if !1
-_GL_FUNCDECL_SYS (towctrans, wint_t, (wint_t wc, wctrans_t desc));
-# endif
+# if 0
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef towctrans
+#   define towctrans rpl_towctrans
+#  endif
+_GL_FUNCDECL_RPL (towctrans, wint_t, (wint_t wc, wctrans_t desc), );
+_GL_CXXALIAS_RPL (towctrans, wint_t, (wint_t wc, wctrans_t desc));
+# else
+#  if !1
+_GL_FUNCDECL_SYS (towctrans, wint_t, (wint_t wc, wctrans_t desc), );
+#  endif
 _GL_CXXALIAS_SYS (towctrans, wint_t, (wint_t wc, wctrans_t desc));
+# endif
 # if __GLIBC__ >= 2
 _GL_CXXALIASWARN (towctrans);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef towctrans
 # if HAVE_RAW_DECL_TOWCTRANS
 _GL_WARN_ON_USE (towctrans, "towctrans is unportable - "
                  "use gnulib module towctrans for portability");
