@@ -1,19 +1,19 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* A GNU-like <signal.h>.
 
-   Copyright (C) 2006-2021 Free Software Foundation, Inc.
+   Copyright (C) 2006-2026 Free Software Foundation, Inc.
 
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
-   (at your option) any later version.
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #if __GNUC__ >= 3
@@ -21,7 +21,7 @@
 #endif
 
 
-#if defined __need_sig_atomic_t || defined __need_sigset_t || defined _GL_ALREADY_INCLUDING_SIGNAL_H || (defined _SIGNAL_H && !defined __SIZEOF_PTHREAD_MUTEX_T)
+#if defined __need_sig_atomic_t || defined __need_sigset_t || defined _GL_M4_ALREADY_INCLUDING_SIGNAL_H || (defined _SIGNAL_H && !defined __SIZEOF_PTHREAD_MUTEX_T)
 /* Special invocation convention:
    - Inside glibc header files.
    - On glibc systems we have a sequence of nested includes
@@ -40,7 +40,7 @@
 
 #ifndef _GL_M4_SIGNAL_H
 
-#define _GL_ALREADY_INCLUDING_SIGNAL_H
+#define _GL_M4_ALREADY_INCLUDING_SIGNAL_H
 
 /* Define pid_t, uid_t.
    Also, mingw defines sigset_t not in <signal.h>, but in <sys/types.h>.
@@ -51,37 +51,50 @@
 /* The include_next requires a split double-inclusion guard.  */
 #include_next <signal.h>
 
-#undef _GL_ALREADY_INCLUDING_SIGNAL_H
+#undef _GL_M4_ALREADY_INCLUDING_SIGNAL_H
 
 #ifndef _GL_M4_SIGNAL_H
 #define _GL_M4_SIGNAL_H
 
-/* Mac OS X 10.3, FreeBSD 6.4, OpenBSD 3.8, OSF/1 4.0, Solaris 2.6, Android,
+/* This file uses GNULIB_POSIXCHECK, HAVE_RAW_DECL_*.  */
+#if !_GL_CONFIG_H_INCLUDED
+ #error "Please include config.h first."
+#endif
+
+/* For testing the OpenBSD version.  */
+#if (IN_M4_GNULIB_TESTS || defined GNULIB_POSIXCHECK) \
+    && defined __OpenBSD__
+# include <sys/param.h>
+#endif
+
+/* Mac OS X 10.3, FreeBSD < 8.0, OpenBSD < 5.1, Solaris 2.6, Android,
    OS/2 kLIBC declare pthread_sigmask in <pthread.h>, not in <signal.h>.
    But avoid namespace pollution on glibc systems.*/
 #if (IN_M4_GNULIB_TESTS || defined GNULIB_POSIXCHECK) \
     && ((defined __APPLE__ && defined __MACH__) \
-        || defined __FreeBSD__ || defined __OpenBSD__ || defined __osf__ \
-        || defined __sun || defined __ANDROID__ || defined __KLIBC__) \
+        || (defined __FreeBSD__ && __FreeBSD__ < 8) \
+        || (defined __OpenBSD__ && OpenBSD < 201205) \
+        || defined __sun || defined __ANDROID__ \
+        || defined __KLIBC__) \
     && ! defined __GLIBC__
 # include <pthread.h>
 #endif
 
 /* The definitions of _GL_FUNCDECL_RPL etc. are copied here.  */
 /* C++ compatible function declaration macros.
-   Copyright (C) 2010-2021 Free Software Foundation, Inc.
+   Copyright (C) 2010-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published
-   by the Free Software Foundation; either version 3 of the License, or
+   under the terms of the GNU Lesser General Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef _GL_CXXDEFS_H
@@ -163,27 +176,63 @@
 # define _GL_EXTERN_C extern
 #endif
 
-/* _GL_FUNCDECL_RPL (func, rettype, parameters_and_attributes);
+/* _GL_EXTERN_C_FUNC declaration;
+   performs the declaration of a function with C linkage.  */
+#if defined __cplusplus
+# define _GL_EXTERN_C_FUNC extern "C"
+#else
+/* In C mode, omit the 'extern' keyword, because attributes in bracket syntax
+   are not allowed between 'extern' and the return type (see gnulib-common.m4).
+ */
+# define _GL_EXTERN_C_FUNC
+#endif
+
+/* _GL_FUNCDECL_RPL (func, rettype, parameters, [attributes]);
    declares a replacement function, named rpl_func, with the given prototype,
    consisting of return type, parameters, and attributes.
-   Example:
-     _GL_FUNCDECL_RPL (open, int, (const char *filename, int flags, ...)
+   Although attributes are optional, the comma before them is required
+   for portability to C17 and earlier.  The attribute _GL_ATTRIBUTE_NOTHROW,
+   if needed, must be placed after the _GL_FUNCDECL_RPL invocation,
+   at the end of the declaration.
+   Examples:
+     _GL_FUNCDECL_RPL (free, void, (void *ptr), ) _GL_ATTRIBUTE_NOTHROW;
+     _GL_FUNCDECL_RPL (open, int, (const char *filename, int flags, ...),
                                   _GL_ARG_NONNULL ((1)));
- */
-#define _GL_FUNCDECL_RPL(func,rettype,parameters_and_attributes) \
-  _GL_FUNCDECL_RPL_1 (rpl_##func, rettype, parameters_and_attributes)
-#define _GL_FUNCDECL_RPL_1(rpl_func,rettype,parameters_and_attributes) \
-  _GL_EXTERN_C rettype rpl_func parameters_and_attributes
 
-/* _GL_FUNCDECL_SYS (func, rettype, parameters_and_attributes);
+   Note: Attributes, such as _GL_ATTRIBUTE_DEPRECATED, are supported in front
+   of a _GL_FUNCDECL_RPL invocation only in C mode, not in C++ mode.  (That's
+   because
+     [[...]] extern "C" <declaration>;
+   is invalid syntax in C++.)
+ */
+#define _GL_FUNCDECL_RPL(func,rettype,parameters,...) \
+  _GL_FUNCDECL_RPL_1 (rpl_##func, rettype, parameters, __VA_ARGS__)
+#define _GL_FUNCDECL_RPL_1(rpl_func,rettype,parameters,...) \
+  _GL_EXTERN_C_FUNC __VA_ARGS__ rettype rpl_func parameters
+
+/* _GL_FUNCDECL_SYS_NAME (func) expands to plain func if C++, and to
+   parenthesized func otherwise.  Parenthesization is needed in C23 if
+   the function is like strchr and so is a qualifier-generic macro
+   that expands to something more complicated.  */
+#ifdef __cplusplus
+# define _GL_FUNCDECL_SYS_NAME(func) func
+#else
+# define _GL_FUNCDECL_SYS_NAME(func) (func)
+#endif
+
+/* _GL_FUNCDECL_SYS (func, rettype, parameters, [attributes]);
    declares the system function, named func, with the given prototype,
    consisting of return type, parameters, and attributes.
-   Example:
-     _GL_FUNCDECL_SYS (open, int, (const char *filename, int flags, ...)
-                                  _GL_ARG_NONNULL ((1)));
+   Although attributes are optional, the comma before them is required
+   for portability to C17 and earlier.  The attribute _GL_ATTRIBUTE_NOTHROW,
+   if needed, must be placed after the _GL_FUNCDECL_RPL invocation,
+   at the end of the declaration.
+   Examples:
+     _GL_FUNCDECL_SYS (getumask, mode_t, (void), ) _GL_ATTRIBUTE_NOTHROW;
+     _GL_FUNCDECL_SYS (posix_openpt, int, (int flags), _GL_ATTRIBUTE_NODISCARD);
  */
-#define _GL_FUNCDECL_SYS(func,rettype,parameters_and_attributes) \
-  _GL_EXTERN_C rettype func parameters_and_attributes
+#define _GL_FUNCDECL_SYS(func,rettype,parameters,...) \
+  _GL_EXTERN_C_FUNC __VA_ARGS__ rettype _GL_FUNCDECL_SYS_NAME (func) parameters
 
 /* _GL_CXXALIAS_RPL (func, rettype, parameters);
    declares a C++ alias called GNULIB_NAMESPACE::func
@@ -354,14 +403,14 @@
    _GL_CXXALIASWARN_1 (func, GNULIB_NAMESPACE)
 # define _GL_CXXALIASWARN_1(func,namespace) \
    _GL_CXXALIASWARN_2 (func, namespace)
-/* To work around GCC bug <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=43881>,
+/* To work around GCC bug <https://gcc.gnu.org/PR43881>,
    we enable the warning only when not optimizing.  */
 # if !(defined __GNUC__ && !defined __clang__ && __OPTIMIZE__)
 #  define _GL_CXXALIASWARN_2(func,namespace) \
     _GL_WARN_ON_USE (func, \
                      "The symbol ::" #func " refers to the system function. " \
                      "Use " #namespace "::" #func " instead.")
-# elif __GNUC__ >= 3 && GNULIB_STRICT_CHECKING
+# elif (__GNUC__ >= 3 || defined __clang__) && GNULIB_STRICT_CHECKING
 #  define _GL_CXXALIASWARN_2(func,namespace) \
      extern __typeof__ (func) func
 # else
@@ -382,7 +431,7 @@
                         GNULIB_NAMESPACE)
 # define _GL_CXXALIASWARN1_1(func,rettype,parameters_and_attributes,namespace) \
    _GL_CXXALIASWARN1_2 (func, rettype, parameters_and_attributes, namespace)
-/* To work around GCC bug <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=43881>,
+/* To work around GCC bug <https://gcc.gnu.org/PR43881>,
    we enable the warning only when not optimizing.  */
 # if !(defined __GNUC__ && !defined __clang__ && __OPTIMIZE__)
 #  define _GL_CXXALIASWARN1_2(func,rettype,parameters_and_attributes,namespace) \
@@ -402,19 +451,19 @@
 
 /* The definition of _GL_ARG_NONNULL is copied here.  */
 /* A C macro for declaring that specific arguments must not be NULL.
-   Copyright (C) 2009-2021 Free Software Foundation, Inc.
+   Copyright (C) 2009-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published
-   by the Free Software Foundation; either version 3 of the License, or
+   under the terms of the GNU Lesser General Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* _GL_ARG_NONNULL((n,...,m)) tells the compiler and static analyzer tools
@@ -430,19 +479,19 @@
 
 /* The definition of _GL_WARN_ON_USE is copied here.  */
 /* A C macro for emitting warnings if a function is used.
-   Copyright (C) 2010-2021 Free Software Foundation, Inc.
+   Copyright (C) 2010-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published
-   by the Free Software Foundation; either version 3 of the License, or
+   under the terms of the GNU Lesser General Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* _GL_WARN_ON_USE (function, "literal string") issues a declaration
@@ -462,6 +511,10 @@
    _GL_WARN_ON_USE is for functions with 'extern' linkage.
    _GL_WARN_ON_USE_ATTRIBUTE is for functions with 'static' or 'inline'
    linkage.
+
+   _GL_WARN_ON_USE should not be used more than once for a given function
+   in a given compilation unit (because this may generate a warning even
+   if the function is never called).
 
    However, one of the reasons that a function is a portability trap is
    if it has the wrong signature.  Declaring FUNCTION with a different
@@ -512,23 +565,23 @@
    */
 #ifndef _GL_WARN_ON_USE
 
-# if 4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)
+# if (4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)) && !defined __clang__
 /* A compiler attribute is available in gcc versions 4.3.0 and later.  */
 #  define _GL_WARN_ON_USE(function, message) \
-extern __typeof__ (function) function __attribute__ ((__warning__ (message)))
+_GL_WARN_EXTERN_C __typeof__ (function) function __attribute__ ((__warning__ (message)))
 #  define _GL_WARN_ON_USE_ATTRIBUTE(message) \
   __attribute__ ((__warning__ (message)))
 # elif __clang_major__ >= 4
 /* Another compiler attribute is available in clang.  */
 #  define _GL_WARN_ON_USE(function, message) \
-extern __typeof__ (function) function \
+_GL_WARN_EXTERN_C __typeof__ (function) function \
   __attribute__ ((__diagnose_if__ (1, message, "warning")))
 #  define _GL_WARN_ON_USE_ATTRIBUTE(message) \
   __attribute__ ((__diagnose_if__ (1, message, "warning")))
-# elif __GNUC__ >= 3 && GNULIB_STRICT_CHECKING
+# elif (__GNUC__ >= 3 || defined __clang__) && GNULIB_STRICT_CHECKING
 /* Verify the existence of the function.  */
 #  define _GL_WARN_ON_USE(function, message) \
-extern __typeof__ (function) function
+_GL_WARN_EXTERN_C __typeof__ (function) function
 #  define _GL_WARN_ON_USE_ATTRIBUTE(message)
 # else /* Unsupported.  */
 #  define _GL_WARN_ON_USE(function, message) \
@@ -548,7 +601,7 @@ _GL_WARN_EXTERN_C int _gl_warn_on_use
 #  define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
      _GL_WARN_ON_USE (function, msg)
 # else
-#  if 4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)
+#  if (4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)) && !defined __clang__
 /* A compiler attribute is available in gcc versions 4.3.0 and later.  */
 #   define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
 extern rettype_gcc function parameters_and_attributes \
@@ -558,7 +611,7 @@ extern rettype_gcc function parameters_and_attributes \
 #   define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
 extern rettype_clang function parameters_and_attributes \
   __attribute__ ((__diagnose_if__ (1, msg, "warning")))
-#  elif __GNUC__ >= 3 && GNULIB_STRICT_CHECKING
+#  elif (__GNUC__ >= 3 || defined __clang__) && GNULIB_STRICT_CHECKING
 /* Verify the existence of the function.  */
 #   define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
 extern rettype_gcc function parameters_and_attributes
@@ -633,6 +686,45 @@ typedef void (*sighandler_t) (int);
 #endif
 
 
+/* Maximum size of a signal name returned by sig2str(), including the
+   terminating NUL byte.  */
+#ifndef SIG2STR_MAX
+/* The longest one: "RTMAX", then "+" or "-", then up to 10 digits, then NUL.
+   Add + 2 as a reserve for the future.  */
+# define SIG2STR_MAX (5 + 1 + 10 + 1 + 2)
+#endif
+
+#if 0
+# if !1
+_GL_FUNCDECL_SYS (sig2str, int, (int signo, char *str), );
+# endif
+_GL_CXXALIAS_SYS (sig2str, int, (int signo, char *str));
+# if __GLIBC__ >= 2
+_GL_CXXALIASWARN (sig2str);
+# endif
+#elif defined GNULIB_POSIXCHECK
+# if HAVE_RAW_DECL_SIG2STR
+_GL_WARN_ON_USE (sig2str, "sig2str is not portable - "
+                 "use gnulib module sig2str for portability");
+# endif
+#endif
+
+#if 0
+# if !1
+_GL_FUNCDECL_SYS (str2sig, int, (char const *str, int *signo_p), );
+# endif
+_GL_CXXALIAS_SYS (str2sig, int, (char const *str, int *signo_p));
+# if __GLIBC__ >= 2
+_GL_CXXALIASWARN (str2sig);
+# endif
+#elif defined GNULIB_POSIXCHECK
+# if HAVE_RAW_DECL_STR2SIG
+_GL_WARN_ON_USE (str2sig, "str2sig is not portable - "
+                 "use gnulib module sig2str for portability");
+# endif
+#endif
+
+
 #if IN_M4_GNULIB_TESTS
 # if 0
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
@@ -642,7 +734,7 @@ typedef void (*sighandler_t) (int);
 _GL_FUNCDECL_RPL (pthread_sigmask, int,
                   (int how,
                    const sigset_t *restrict new_mask,
-                   sigset_t *restrict old_mask));
+                   sigset_t *restrict old_mask), );
 _GL_CXXALIAS_RPL (pthread_sigmask, int,
                   (int how,
                    const sigset_t *restrict new_mask,
@@ -652,7 +744,7 @@ _GL_CXXALIAS_RPL (pthread_sigmask, int,
 _GL_FUNCDECL_SYS (pthread_sigmask, int,
                   (int how,
                    const sigset_t *restrict new_mask,
-                   sigset_t *restrict old_mask));
+                   sigset_t *restrict old_mask), );
 #  endif
 _GL_CXXALIAS_SYS (pthread_sigmask, int,
                   (int how,
@@ -663,7 +755,6 @@ _GL_CXXALIAS_SYS (pthread_sigmask, int,
 _GL_CXXALIASWARN (pthread_sigmask);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef pthread_sigmask
 # if HAVE_RAW_DECL_PTHREAD_SIGMASK
 _GL_WARN_ON_USE (pthread_sigmask, "pthread_sigmask is not portable - "
                  "use gnulib module pthread_sigmask for portability");
@@ -677,11 +768,11 @@ _GL_WARN_ON_USE (pthread_sigmask, "pthread_sigmask is not portable - "
 #   undef raise
 #   define raise rpl_raise
 #  endif
-_GL_FUNCDECL_RPL (raise, int, (int sig));
+_GL_FUNCDECL_RPL (raise, int, (int sig), );
 _GL_CXXALIAS_RPL (raise, int, (int sig));
 # else
 #  if !1
-_GL_FUNCDECL_SYS (raise, int, (int sig));
+_GL_FUNCDECL_SYS (raise, int, (int sig), );
 #  endif
 _GL_CXXALIAS_SYS (raise, int, (int sig));
 # endif
@@ -689,7 +780,6 @@ _GL_CXXALIAS_SYS (raise, int, (int sig));
 _GL_CXXALIASWARN (raise);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef raise
 /* Assume raise is always declared.  */
 _GL_WARN_ON_USE (raise, "raise can crash on native Windows - "
                  "use gnulib module raise for portability");
@@ -737,7 +827,7 @@ typedef int verify_NSIG_constraint[NSIG <= 32 ? 1 : -1];
 #   undef sigismember
 #  endif
 # else
-_GL_FUNCDECL_SYS (sigismember, int, (const sigset_t *set, int sig)
+_GL_FUNCDECL_SYS (sigismember, int, (const sigset_t *set, int sig),
                                     _GL_ARG_NONNULL ((1)));
 # endif
 _GL_CXXALIAS_SYS (sigismember, int, (const sigset_t *set, int sig));
@@ -750,7 +840,7 @@ _GL_CXXALIASWARN (sigismember);
 #   undef sigemptyset
 #  endif
 # else
-_GL_FUNCDECL_SYS (sigemptyset, int, (sigset_t *set) _GL_ARG_NONNULL ((1)));
+_GL_FUNCDECL_SYS (sigemptyset, int, (sigset_t *set), _GL_ARG_NONNULL ((1)));
 # endif
 _GL_CXXALIAS_SYS (sigemptyset, int, (sigset_t *set));
 _GL_CXXALIASWARN (sigemptyset);
@@ -762,7 +852,7 @@ _GL_CXXALIASWARN (sigemptyset);
 #   undef sigaddset
 #  endif
 # else
-_GL_FUNCDECL_SYS (sigaddset, int, (sigset_t *set, int sig)
+_GL_FUNCDECL_SYS (sigaddset, int, (sigset_t *set, int sig),
                                   _GL_ARG_NONNULL ((1)));
 # endif
 _GL_CXXALIAS_SYS (sigaddset, int, (sigset_t *set, int sig));
@@ -775,7 +865,7 @@ _GL_CXXALIASWARN (sigaddset);
 #   undef sigdelset
 #  endif
 # else
-_GL_FUNCDECL_SYS (sigdelset, int, (sigset_t *set, int sig)
+_GL_FUNCDECL_SYS (sigdelset, int, (sigset_t *set, int sig),
                                   _GL_ARG_NONNULL ((1)));
 # endif
 _GL_CXXALIAS_SYS (sigdelset, int, (sigset_t *set, int sig));
@@ -788,14 +878,14 @@ _GL_CXXALIASWARN (sigdelset);
 #   undef sigfillset
 #  endif
 # else
-_GL_FUNCDECL_SYS (sigfillset, int, (sigset_t *set) _GL_ARG_NONNULL ((1)));
+_GL_FUNCDECL_SYS (sigfillset, int, (sigset_t *set), _GL_ARG_NONNULL ((1)));
 # endif
 _GL_CXXALIAS_SYS (sigfillset, int, (sigset_t *set));
 _GL_CXXALIASWARN (sigfillset);
 
 /* Return the set of those blocked signals that are pending.  */
 # if !1
-_GL_FUNCDECL_SYS (sigpending, int, (sigset_t *set) _GL_ARG_NONNULL ((1)));
+_GL_FUNCDECL_SYS (sigpending, int, (sigset_t *set), _GL_ARG_NONNULL ((1)));
 # endif
 _GL_CXXALIAS_SYS (sigpending, int, (sigset_t *set));
 _GL_CXXALIASWARN (sigpending);
@@ -812,7 +902,7 @@ _GL_CXXALIASWARN (sigpending);
 _GL_FUNCDECL_SYS (sigprocmask, int,
                   (int operation,
                    const sigset_t *restrict set,
-                   sigset_t *restrict old_set));
+                   sigset_t *restrict old_set), );
 # endif
 _GL_CXXALIAS_SYS (sigprocmask, int,
                   (int operation,
@@ -837,7 +927,7 @@ typedef void (*_gl_function_taking_int_returning_void_t) (int);
 #   define signal rpl_signal
 #  endif
 _GL_FUNCDECL_RPL (signal, _gl_function_taking_int_returning_void_t,
-                  (int sig, _gl_function_taking_int_returning_void_t func));
+                  (int sig, _gl_function_taking_int_returning_void_t func), );
 _GL_CXXALIAS_RPL (signal, _gl_function_taking_int_returning_void_t,
                   (int sig, _gl_function_taking_int_returning_void_t func));
 # else
@@ -845,7 +935,7 @@ _GL_CXXALIAS_RPL (signal, _gl_function_taking_int_returning_void_t,
    because it occurs in <sys/signal.h>, not <signal.h> directly.  */
 #  if defined __OpenBSD__
 _GL_FUNCDECL_SYS (signal, _gl_function_taking_int_returning_void_t,
-                  (int sig, _gl_function_taking_int_returning_void_t func));
+                  (int sig, _gl_function_taking_int_returning_void_t func), );
 #  endif
 _GL_CXXALIAS_SYS (signal, _gl_function_taking_int_returning_void_t,
                   (int sig, _gl_function_taking_int_returning_void_t func));
@@ -860,37 +950,30 @@ _GL_EXTERN_C int _gl_raise_SIGPIPE (void);
 # endif
 
 #elif defined GNULIB_POSIXCHECK
-# undef sigaddset
 # if HAVE_RAW_DECL_SIGADDSET
 _GL_WARN_ON_USE (sigaddset, "sigaddset is unportable - "
                  "use the gnulib module sigprocmask for portability");
 # endif
-# undef sigdelset
 # if HAVE_RAW_DECL_SIGDELSET
 _GL_WARN_ON_USE (sigdelset, "sigdelset is unportable - "
                  "use the gnulib module sigprocmask for portability");
 # endif
-# undef sigemptyset
 # if HAVE_RAW_DECL_SIGEMPTYSET
 _GL_WARN_ON_USE (sigemptyset, "sigemptyset is unportable - "
                  "use the gnulib module sigprocmask for portability");
 # endif
-# undef sigfillset
 # if HAVE_RAW_DECL_SIGFILLSET
 _GL_WARN_ON_USE (sigfillset, "sigfillset is unportable - "
                  "use the gnulib module sigprocmask for portability");
 # endif
-# undef sigismember
 # if HAVE_RAW_DECL_SIGISMEMBER
 _GL_WARN_ON_USE (sigismember, "sigismember is unportable - "
                  "use the gnulib module sigprocmask for portability");
 # endif
-# undef sigpending
 # if HAVE_RAW_DECL_SIGPENDING
 _GL_WARN_ON_USE (sigpending, "sigpending is unportable - "
                  "use the gnulib module sigprocmask for portability");
 # endif
-# undef sigprocmask
 # if HAVE_RAW_DECL_SIGPROCMASK
 _GL_WARN_ON_USE (sigprocmask, "sigprocmask is unportable - "
                  "use the gnulib module sigprocmask for portability");
@@ -963,7 +1046,7 @@ struct sigaction
 #  endif
 
 _GL_FUNCDECL_SYS (sigaction, int, (int, const struct sigaction *restrict,
-                                   struct sigaction *restrict));
+                                   struct sigaction *restrict), );
 
 # elif !1
 
@@ -976,7 +1059,6 @@ _GL_CXXALIAS_SYS (sigaction, int, (int, const struct sigaction *restrict,
 _GL_CXXALIASWARN (sigaction);
 
 #elif defined GNULIB_POSIXCHECK
-# undef sigaction
 # if HAVE_RAW_DECL_SIGACTION
 _GL_WARN_ON_USE (sigaction, "sigaction is unportable - "
                  "use the gnulib module sigaction for portability");

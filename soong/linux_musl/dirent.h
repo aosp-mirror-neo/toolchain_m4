@@ -1,18 +1,18 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* A GNU-like <dirent.h>.
-   Copyright (C) 2006-2021 Free Software Foundation, Inc.
+   Copyright (C) 2006-2026 Free Software Foundation, Inc.
 
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
-   (at your option) any later version.
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef _GL_M4_DIRENT_H
@@ -30,6 +30,12 @@
 #ifndef _GL_M4_DIRENT_H
 #define _GL_M4_DIRENT_H
 
+/* This file uses _GL_ATTRIBUTE_DEALLOC, _GL_ATTRIBUTE_MALLOC,
+   _GL_ATTRIBUTE_PURE, GNULIB_POSIXCHECK, HAVE_RAW_DECL_*.  */
+#if !_GL_CONFIG_H_INCLUDED
+ #error "Please include config.h first."
+#endif
+
 /* Get ino_t.  Needed on some systems, including glibc 2.8.  */
 #include <sys/types.h>
 
@@ -41,18 +47,94 @@ struct dirent
   char d_type;
   char d_name[1];
 };
-/* Possible values for 'd_type'.  */
-#  define DT_UNKNOWN 0
-#  define DT_FIFO    1          /* FIFO */
-#  define DT_CHR     2          /* character device */
-#  define DT_DIR     4          /* directory */
-#  define DT_BLK     6          /* block device */
-#  define DT_REG     8          /* regular file */
-#  define DT_LNK    10          /* symbolic link */
-#  define DT_SOCK   12          /* socket */
-#  define DT_WHT    14          /* whiteout */
-typedef struct gl_directory DIR;
 #  define GNULIB_defined_struct_dirent 1
+# endif
+#endif
+
+/* 'd_type' macros specified in GNU, i.e., POSIX.1-2024 plus DT_WHT,
+   but not (yet) DT_MQ, DT_SEM, DT_SHM, DT_TMO.
+   These macros can be useful even on platforms that do not support
+   d_type or the corresponding file types.
+   The values of these macros are all in the 'unsigned char' range.
+   Default to the Linux values which are also popular elsewhere,
+   and check that all macros have distinct values.  */
+#ifndef DT_UNKNOWN
+# define DT_UNKNOWN 0
+#endif
+#ifndef DT_FIFO
+# define DT_FIFO  1 /* FIFO */
+#endif
+#ifndef DT_CHR
+# define DT_CHR   2 /* character device */
+#endif
+#ifndef DT_DIR
+# define DT_DIR   4 /* directory */
+#endif
+#ifndef DT_BLK
+# define DT_BLK   6 /* block device */
+#endif
+#ifndef DT_REG
+# define DT_REG   8 /* regular file */
+#endif
+#ifndef DT_LNK
+# define DT_LNK  10 /* symbolic link */
+#endif
+#ifndef DT_SOCK
+# define DT_SOCK 12 /* socket */
+#endif
+#ifndef DT_WHT
+# define DT_WHT  14 /* whiteout */
+#endif
+static_assert (DT_UNKNOWN != DT_FIFO && DT_UNKNOWN != DT_CHR
+               && DT_UNKNOWN != DT_BLK && DT_UNKNOWN != DT_REG
+               && DT_UNKNOWN != DT_LNK && DT_UNKNOWN != DT_SOCK
+               && DT_UNKNOWN != DT_WHT
+               && DT_FIFO != DT_CHR && DT_FIFO != DT_BLK && DT_FIFO != DT_REG
+               && DT_FIFO != DT_LNK && DT_FIFO != DT_SOCK && DT_FIFO != DT_WHT
+               && DT_CHR != DT_BLK && DT_CHR != DT_REG && DT_CHR != DT_LNK
+               && DT_CHR != DT_SOCK && DT_CHR != DT_WHT
+               && DT_BLK != DT_REG && DT_BLK != DT_LNK && DT_BLK != DT_SOCK
+               && DT_BLK != DT_WHT
+               && DT_REG != DT_LNK && DT_REG != DT_SOCK && DT_REG != DT_WHT
+               && DT_LNK != DT_SOCK && DT_LNK != DT_WHT
+               && DT_SOCK != DT_WHT);
+
+/* Other optional information about a directory entry.  */
+#define _GL_DT_NOTDIR 0x100   /* Not a directory */
+
+#if !1
+# if !GNULIB_defined_DIR
+/* struct gl_directory is a type with a field 'int fd_to_close'.
+   It is needed for implementing fdopendir().  */
+struct gl_directory;
+#  if 1
+#   define DIR struct gl_directory
+#  else
+typedef struct gl_directory DIR;
+#  endif
+#  define GNULIB_defined_DIR 1
+# endif
+#endif
+
+/* _GL_ATTRIBUTE_DEALLOC (F, I) declares that the function returns pointers
+   that can be freed by passing them as the Ith argument to the
+   function F.  */
+#ifndef _GL_ATTRIBUTE_DEALLOC
+# if __GNUC__ >= 11 && !defined __clang__
+#  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+# else
+#  define _GL_ATTRIBUTE_DEALLOC(f, i)
+# endif
+#endif
+
+/* _GL_ATTRIBUTE_MALLOC declares that the function returns a pointer to freshly
+   allocated memory.  */
+/* Applies to: functions.  */
+#ifndef _GL_ATTRIBUTE_MALLOC
+# if __GNUC__ >= 3 || defined __clang__
+#  define _GL_ATTRIBUTE_MALLOC __attribute__ ((__malloc__))
+# else
+#  define _GL_ATTRIBUTE_MALLOC
 # endif
 #endif
 
@@ -68,19 +150,19 @@ typedef struct gl_directory DIR;
 
 /* The definitions of _GL_FUNCDECL_RPL etc. are copied here.  */
 /* C++ compatible function declaration macros.
-   Copyright (C) 2010-2021 Free Software Foundation, Inc.
+   Copyright (C) 2010-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published
-   by the Free Software Foundation; either version 3 of the License, or
+   under the terms of the GNU Lesser General Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef _GL_CXXDEFS_H
@@ -162,27 +244,63 @@ typedef struct gl_directory DIR;
 # define _GL_EXTERN_C extern
 #endif
 
-/* _GL_FUNCDECL_RPL (func, rettype, parameters_and_attributes);
+/* _GL_EXTERN_C_FUNC declaration;
+   performs the declaration of a function with C linkage.  */
+#if defined __cplusplus
+# define _GL_EXTERN_C_FUNC extern "C"
+#else
+/* In C mode, omit the 'extern' keyword, because attributes in bracket syntax
+   are not allowed between 'extern' and the return type (see gnulib-common.m4).
+ */
+# define _GL_EXTERN_C_FUNC
+#endif
+
+/* _GL_FUNCDECL_RPL (func, rettype, parameters, [attributes]);
    declares a replacement function, named rpl_func, with the given prototype,
    consisting of return type, parameters, and attributes.
-   Example:
-     _GL_FUNCDECL_RPL (open, int, (const char *filename, int flags, ...)
+   Although attributes are optional, the comma before them is required
+   for portability to C17 and earlier.  The attribute _GL_ATTRIBUTE_NOTHROW,
+   if needed, must be placed after the _GL_FUNCDECL_RPL invocation,
+   at the end of the declaration.
+   Examples:
+     _GL_FUNCDECL_RPL (free, void, (void *ptr), ) _GL_ATTRIBUTE_NOTHROW;
+     _GL_FUNCDECL_RPL (open, int, (const char *filename, int flags, ...),
                                   _GL_ARG_NONNULL ((1)));
- */
-#define _GL_FUNCDECL_RPL(func,rettype,parameters_and_attributes) \
-  _GL_FUNCDECL_RPL_1 (rpl_##func, rettype, parameters_and_attributes)
-#define _GL_FUNCDECL_RPL_1(rpl_func,rettype,parameters_and_attributes) \
-  _GL_EXTERN_C rettype rpl_func parameters_and_attributes
 
-/* _GL_FUNCDECL_SYS (func, rettype, parameters_and_attributes);
+   Note: Attributes, such as _GL_ATTRIBUTE_DEPRECATED, are supported in front
+   of a _GL_FUNCDECL_RPL invocation only in C mode, not in C++ mode.  (That's
+   because
+     [[...]] extern "C" <declaration>;
+   is invalid syntax in C++.)
+ */
+#define _GL_FUNCDECL_RPL(func,rettype,parameters,...) \
+  _GL_FUNCDECL_RPL_1 (rpl_##func, rettype, parameters, __VA_ARGS__)
+#define _GL_FUNCDECL_RPL_1(rpl_func,rettype,parameters,...) \
+  _GL_EXTERN_C_FUNC __VA_ARGS__ rettype rpl_func parameters
+
+/* _GL_FUNCDECL_SYS_NAME (func) expands to plain func if C++, and to
+   parenthesized func otherwise.  Parenthesization is needed in C23 if
+   the function is like strchr and so is a qualifier-generic macro
+   that expands to something more complicated.  */
+#ifdef __cplusplus
+# define _GL_FUNCDECL_SYS_NAME(func) func
+#else
+# define _GL_FUNCDECL_SYS_NAME(func) (func)
+#endif
+
+/* _GL_FUNCDECL_SYS (func, rettype, parameters, [attributes]);
    declares the system function, named func, with the given prototype,
    consisting of return type, parameters, and attributes.
-   Example:
-     _GL_FUNCDECL_SYS (open, int, (const char *filename, int flags, ...)
-                                  _GL_ARG_NONNULL ((1)));
+   Although attributes are optional, the comma before them is required
+   for portability to C17 and earlier.  The attribute _GL_ATTRIBUTE_NOTHROW,
+   if needed, must be placed after the _GL_FUNCDECL_RPL invocation,
+   at the end of the declaration.
+   Examples:
+     _GL_FUNCDECL_SYS (getumask, mode_t, (void), ) _GL_ATTRIBUTE_NOTHROW;
+     _GL_FUNCDECL_SYS (posix_openpt, int, (int flags), _GL_ATTRIBUTE_NODISCARD);
  */
-#define _GL_FUNCDECL_SYS(func,rettype,parameters_and_attributes) \
-  _GL_EXTERN_C rettype func parameters_and_attributes
+#define _GL_FUNCDECL_SYS(func,rettype,parameters,...) \
+  _GL_EXTERN_C_FUNC __VA_ARGS__ rettype _GL_FUNCDECL_SYS_NAME (func) parameters
 
 /* _GL_CXXALIAS_RPL (func, rettype, parameters);
    declares a C++ alias called GNULIB_NAMESPACE::func
@@ -353,14 +471,14 @@ typedef struct gl_directory DIR;
    _GL_CXXALIASWARN_1 (func, GNULIB_NAMESPACE)
 # define _GL_CXXALIASWARN_1(func,namespace) \
    _GL_CXXALIASWARN_2 (func, namespace)
-/* To work around GCC bug <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=43881>,
+/* To work around GCC bug <https://gcc.gnu.org/PR43881>,
    we enable the warning only when not optimizing.  */
 # if !(defined __GNUC__ && !defined __clang__ && __OPTIMIZE__)
 #  define _GL_CXXALIASWARN_2(func,namespace) \
     _GL_WARN_ON_USE (func, \
                      "The symbol ::" #func " refers to the system function. " \
                      "Use " #namespace "::" #func " instead.")
-# elif __GNUC__ >= 3 && GNULIB_STRICT_CHECKING
+# elif (__GNUC__ >= 3 || defined __clang__) && GNULIB_STRICT_CHECKING
 #  define _GL_CXXALIASWARN_2(func,namespace) \
      extern __typeof__ (func) func
 # else
@@ -381,7 +499,7 @@ typedef struct gl_directory DIR;
                         GNULIB_NAMESPACE)
 # define _GL_CXXALIASWARN1_1(func,rettype,parameters_and_attributes,namespace) \
    _GL_CXXALIASWARN1_2 (func, rettype, parameters_and_attributes, namespace)
-/* To work around GCC bug <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=43881>,
+/* To work around GCC bug <https://gcc.gnu.org/PR43881>,
    we enable the warning only when not optimizing.  */
 # if !(defined __GNUC__ && !defined __clang__ && __OPTIMIZE__)
 #  define _GL_CXXALIASWARN1_2(func,rettype,parameters_and_attributes,namespace) \
@@ -401,19 +519,19 @@ typedef struct gl_directory DIR;
 
 /* The definition of _GL_ARG_NONNULL is copied here.  */
 /* A C macro for declaring that specific arguments must not be NULL.
-   Copyright (C) 2009-2021 Free Software Foundation, Inc.
+   Copyright (C) 2009-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published
-   by the Free Software Foundation; either version 3 of the License, or
+   under the terms of the GNU Lesser General Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* _GL_ARG_NONNULL((n,...,m)) tells the compiler and static analyzer tools
@@ -429,19 +547,19 @@ typedef struct gl_directory DIR;
 
 /* The definition of _GL_WARN_ON_USE is copied here.  */
 /* A C macro for emitting warnings if a function is used.
-   Copyright (C) 2010-2021 Free Software Foundation, Inc.
+   Copyright (C) 2010-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published
-   by the Free Software Foundation; either version 3 of the License, or
+   under the terms of the GNU Lesser General Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* _GL_WARN_ON_USE (function, "literal string") issues a declaration
@@ -461,6 +579,10 @@ typedef struct gl_directory DIR;
    _GL_WARN_ON_USE is for functions with 'extern' linkage.
    _GL_WARN_ON_USE_ATTRIBUTE is for functions with 'static' or 'inline'
    linkage.
+
+   _GL_WARN_ON_USE should not be used more than once for a given function
+   in a given compilation unit (because this may generate a warning even
+   if the function is never called).
 
    However, one of the reasons that a function is a portability trap is
    if it has the wrong signature.  Declaring FUNCTION with a different
@@ -511,23 +633,23 @@ typedef struct gl_directory DIR;
    */
 #ifndef _GL_WARN_ON_USE
 
-# if 4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)
+# if (4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)) && !defined __clang__
 /* A compiler attribute is available in gcc versions 4.3.0 and later.  */
 #  define _GL_WARN_ON_USE(function, message) \
-extern __typeof__ (function) function __attribute__ ((__warning__ (message)))
+_GL_WARN_EXTERN_C __typeof__ (function) function __attribute__ ((__warning__ (message)))
 #  define _GL_WARN_ON_USE_ATTRIBUTE(message) \
   __attribute__ ((__warning__ (message)))
 # elif __clang_major__ >= 4
 /* Another compiler attribute is available in clang.  */
 #  define _GL_WARN_ON_USE(function, message) \
-extern __typeof__ (function) function \
+_GL_WARN_EXTERN_C __typeof__ (function) function \
   __attribute__ ((__diagnose_if__ (1, message, "warning")))
 #  define _GL_WARN_ON_USE_ATTRIBUTE(message) \
   __attribute__ ((__diagnose_if__ (1, message, "warning")))
-# elif __GNUC__ >= 3 && GNULIB_STRICT_CHECKING
+# elif (__GNUC__ >= 3 || defined __clang__) && GNULIB_STRICT_CHECKING
 /* Verify the existence of the function.  */
 #  define _GL_WARN_ON_USE(function, message) \
-extern __typeof__ (function) function
+_GL_WARN_EXTERN_C __typeof__ (function) function
 #  define _GL_WARN_ON_USE_ATTRIBUTE(message)
 # else /* Unsupported.  */
 #  define _GL_WARN_ON_USE(function, message) \
@@ -547,7 +669,7 @@ _GL_WARN_EXTERN_C int _gl_warn_on_use
 #  define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
      _GL_WARN_ON_USE (function, msg)
 # else
-#  if 4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)
+#  if (4 < __GNUC__ || (__GNUC__ == 4 && 3 <= __GNUC_MINOR__)) && !defined __clang__
 /* A compiler attribute is available in gcc versions 4.3.0 and later.  */
 #   define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
 extern rettype_gcc function parameters_and_attributes \
@@ -557,7 +679,7 @@ extern rettype_gcc function parameters_and_attributes \
 #   define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
 extern rettype_clang function parameters_and_attributes \
   __attribute__ ((__diagnose_if__ (1, msg, "warning")))
-#  elif __GNUC__ >= 3 && GNULIB_STRICT_CHECKING
+#  elif (__GNUC__ >= 3 || defined __clang__) && GNULIB_STRICT_CHECKING
 /* Verify the existence of the function.  */
 #   define _GL_WARN_ON_USE_CXX(function,rettype_gcc,rettype_clang,parameters_and_attributes,msg) \
 extern rettype_gcc function parameters_and_attributes
@@ -584,35 +706,82 @@ _GL_WARN_EXTERN_C int _gl_warn_on_use
 #if 1
 # if 0
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
-#   undef opendir
-#   define opendir rpl_opendir
-#   define GNULIB_defined_opendir 1
+#   undef closedir
+#   define closedir rpl_closedir
+#   define GNULIB_defined_closedir 1
 #  endif
-_GL_FUNCDECL_RPL (opendir, DIR *, (const char *dir_name) _GL_ARG_NONNULL ((1)));
-_GL_CXXALIAS_RPL (opendir, DIR *, (const char *dir_name));
+_GL_FUNCDECL_RPL (closedir, int, (DIR *dirp), _GL_ARG_NONNULL ((1)));
+_GL_CXXALIAS_RPL (closedir, int, (DIR *dirp));
 # else
 #  if !1
-_GL_FUNCDECL_SYS (opendir, DIR *, (const char *dir_name) _GL_ARG_NONNULL ((1)));
+_GL_FUNCDECL_SYS (closedir, int, (DIR *dirp), _GL_ARG_NONNULL ((1)));
 #  endif
-_GL_CXXALIAS_SYS (opendir, DIR *, (const char *dir_name));
+_GL_CXXALIAS_SYS (closedir, int, (DIR *dirp));
 # endif
-_GL_CXXALIASWARN (opendir);
+_GL_CXXALIASWARN (closedir);
 #elif defined GNULIB_POSIXCHECK
-# undef opendir
-# if HAVE_RAW_DECL_OPENDIR
-_GL_WARN_ON_USE (opendir, "opendir is not portable - "
-                 "use gnulib module opendir for portability");
+# if HAVE_RAW_DECL_CLOSEDIR
+_GL_WARN_ON_USE (closedir, "closedir is not portable - "
+                 "use gnulib module closedir for portability");
 # endif
 #endif
 
 #if 1
-# if !1
-_GL_FUNCDECL_SYS (readdir, struct dirent *, (DIR *dirp) _GL_ARG_NONNULL ((1)));
+# if 0
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef opendir
+#   define opendir rpl_opendir
+#   define GNULIB_defined_opendir 1
+#  endif
+_GL_FUNCDECL_RPL (opendir, DIR *,
+                  (const char *dir_name),
+                  _GL_ARG_NONNULL ((1))
+                  _GL_ATTRIBUTE_MALLOC _GL_ATTRIBUTE_DEALLOC (closedir, 1));
+_GL_CXXALIAS_RPL (opendir, DIR *, (const char *dir_name));
+# else
+#  if !1 || (__GNUC__ >= 11 && !defined __clang__)
+_GL_FUNCDECL_SYS (opendir, DIR *,
+                  (const char *dir_name),
+                  _GL_ARG_NONNULL ((1))
+                  _GL_ATTRIBUTE_MALLOC _GL_ATTRIBUTE_DEALLOC (closedir, 1));
+#  endif
+_GL_CXXALIAS_SYS (opendir, DIR *, (const char *dir_name));
 # endif
+_GL_CXXALIASWARN (opendir);
+#else
+# if 1 && !GNULIB_defined_DIR \
+     && (__GNUC__ >= 11 && !defined __clang__) && !defined opendir
+/* For -Wmismatched-dealloc: Associate opendir with closedir or
+   rpl_closedir.  */
+_GL_FUNCDECL_SYS (opendir, DIR *,
+                  (const char *dir_name),
+                  _GL_ARG_NONNULL ((1))
+                  _GL_ATTRIBUTE_MALLOC _GL_ATTRIBUTE_DEALLOC (closedir, 1));
+# endif
+# if defined GNULIB_POSIXCHECK
+#  if HAVE_RAW_DECL_OPENDIR
+_GL_WARN_ON_USE (opendir, "opendir is not portable - "
+                 "use gnulib module opendir for portability");
+#  endif
+# endif
+#endif
+
+#if 1
+# if 0
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef readdir
+#   define readdir rpl_readdir
+#  endif
+_GL_FUNCDECL_RPL (readdir, struct dirent *, (DIR *dirp), _GL_ARG_NONNULL ((1)));
+_GL_CXXALIAS_RPL (readdir, struct dirent *, (DIR *dirp));
+# else
+#  if !1
+_GL_FUNCDECL_SYS (readdir, struct dirent *, (DIR *dirp), _GL_ARG_NONNULL ((1)));
+#  endif
 _GL_CXXALIAS_SYS (readdir, struct dirent *, (DIR *dirp));
+# endif
 _GL_CXXALIASWARN (readdir);
 #elif defined GNULIB_POSIXCHECK
-# undef readdir
 # if HAVE_RAW_DECL_READDIR
 _GL_WARN_ON_USE (readdir, "readdir is not portable - "
                  "use gnulib module readdir for portability");
@@ -620,40 +789,24 @@ _GL_WARN_ON_USE (readdir, "readdir is not portable - "
 #endif
 
 #if 1
-# if !1
-_GL_FUNCDECL_SYS (rewinddir, void, (DIR *dirp) _GL_ARG_NONNULL ((1)));
-# endif
+# if 0
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef rewinddir
+#   define rewinddir rpl_rewinddir
+#  endif
+_GL_FUNCDECL_RPL (rewinddir, void, (DIR *dirp), _GL_ARG_NONNULL ((1)));
+_GL_CXXALIAS_RPL (rewinddir, void, (DIR *dirp));
+# else
+#  if !1
+_GL_FUNCDECL_SYS (rewinddir, void, (DIR *dirp), _GL_ARG_NONNULL ((1)));
+#  endif
 _GL_CXXALIAS_SYS (rewinddir, void, (DIR *dirp));
+# endif
 _GL_CXXALIASWARN (rewinddir);
 #elif defined GNULIB_POSIXCHECK
-# undef rewinddir
 # if HAVE_RAW_DECL_REWINDDIR
 _GL_WARN_ON_USE (rewinddir, "rewinddir is not portable - "
                  "use gnulib module rewinddir for portability");
-# endif
-#endif
-
-#if 1
-# if 0
-#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
-#   undef closedir
-#   define closedir rpl_closedir
-#   define GNULIB_defined_closedir 1
-#  endif
-_GL_FUNCDECL_RPL (closedir, int, (DIR *dirp) _GL_ARG_NONNULL ((1)));
-_GL_CXXALIAS_RPL (closedir, int, (DIR *dirp));
-# else
-#  if !1
-_GL_FUNCDECL_SYS (closedir, int, (DIR *dirp) _GL_ARG_NONNULL ((1)));
-#  endif
-_GL_CXXALIAS_SYS (closedir, int, (DIR *dirp));
-# endif
-_GL_CXXALIASWARN (closedir);
-#elif defined GNULIB_POSIXCHECK
-# undef closedir
-# if HAVE_RAW_DECL_CLOSEDIR
-_GL_WARN_ON_USE (closedir, "closedir is not portable - "
-                 "use gnulib module closedir for portability");
 # endif
 #endif
 
@@ -666,15 +819,9 @@ _GL_WARN_ON_USE (closedir, "closedir is not portable - "
 #   undef dirfd
 #   define dirfd rpl_dirfd
 #  endif
-_GL_FUNCDECL_RPL (dirfd, int, (DIR *) _GL_ARG_NONNULL ((1)));
+_GL_FUNCDECL_RPL (dirfd, int, (DIR *), _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL (dirfd, int, (DIR *));
 
-#  ifdef __KLIBC__
-/* Gnulib internal hooks needed to maintain the dirfd metadata.  */
-_GL_EXTERN_C int _gl_register_dirp_fd (int fd, DIR *dirp)
-     _GL_ARG_NONNULL ((2));
-_GL_EXTERN_C void _gl_unregister_dirp_fd (int fd);
-#  endif
 # else
 #  if defined __cplusplus && defined GNULIB_NAMESPACE && defined dirfd
     /* dirfd is defined as a macro and not as a function.
@@ -683,13 +830,12 @@ static inline int (dirfd) (DIR *dp) { return dirfd (dp); }
 #   undef dirfd
 #  endif
 #  if !(1 || defined dirfd)
-_GL_FUNCDECL_SYS (dirfd, int, (DIR *) _GL_ARG_NONNULL ((1)));
+_GL_FUNCDECL_SYS (dirfd, int, (DIR *), _GL_ARG_NONNULL ((1)));
 #  endif
 _GL_CXXALIAS_SYS (dirfd, int, (DIR *));
 # endif
 _GL_CXXALIASWARN (dirfd);
 #elif defined GNULIB_POSIXCHECK
-# undef dirfd
 # if HAVE_RAW_DECL_DIRFD
 _GL_WARN_ON_USE (dirfd, "dirfd is unportable - "
                  "use gnulib module dirfd for portability");
@@ -707,20 +853,34 @@ _GL_WARN_ON_USE (dirfd, "dirfd is unportable - "
 #   undef fdopendir
 #   define fdopendir rpl_fdopendir
 #  endif
-_GL_FUNCDECL_RPL (fdopendir, DIR *, (int fd));
+_GL_FUNCDECL_RPL (fdopendir, DIR *,
+                  (int fd),
+                  _GL_ATTRIBUTE_MALLOC _GL_ATTRIBUTE_DEALLOC (closedir, 1));
 _GL_CXXALIAS_RPL (fdopendir, DIR *, (int fd));
 # else
-#  if !1 || !1
-_GL_FUNCDECL_SYS (fdopendir, DIR *, (int fd));
+#  if !1 || !1 \
+      || (__GNUC__ >= 11 && !defined __clang__)
+_GL_FUNCDECL_SYS (fdopendir, DIR *,
+                  (int fd),
+                  _GL_ATTRIBUTE_MALLOC _GL_ATTRIBUTE_DEALLOC (closedir, 1));
 #  endif
 _GL_CXXALIAS_SYS (fdopendir, DIR *, (int fd));
 # endif
 _GL_CXXALIASWARN (fdopendir);
-#elif defined GNULIB_POSIXCHECK
-# undef fdopendir
-# if HAVE_RAW_DECL_FDOPENDIR
+#else
+# if 1 \
+     && (__GNUC__ >= 11 && !defined __clang__) && !defined fdopendir
+/* For -Wmismatched-dealloc: Associate fdopendir with closedir or
+   rpl_closedir.  */
+_GL_FUNCDECL_SYS (fdopendir, DIR *,
+                  (int fd),
+                  _GL_ATTRIBUTE_MALLOC _GL_ATTRIBUTE_DEALLOC (closedir, 1));
+# endif
+# if defined GNULIB_POSIXCHECK
+#  if HAVE_RAW_DECL_FDOPENDIR
 _GL_WARN_ON_USE (fdopendir, "fdopendir is unportable - "
                  "use gnulib module fdopendir for portability");
+#  endif
 # endif
 #endif
 
@@ -733,7 +893,7 @@ _GL_WARN_ON_USE (fdopendir, "fdopendir is unportable - "
 _GL_FUNCDECL_SYS (scandir, int,
                   (const char *dir, struct dirent ***namelist,
                    int (*filter) (const struct dirent *),
-                   int (*cmp) (const struct dirent **, const struct dirent **))
+                   int (*cmp) (const struct dirent **, const struct dirent **)),
                   _GL_ARG_NONNULL ((1, 2, 4)));
 # endif
 /* Need to cast, because on glibc systems, the fourth parameter is
@@ -744,7 +904,6 @@ _GL_CXXALIAS_SYS_CAST (scandir, int,
                         int (*cmp) (const struct dirent **, const struct dirent **)));
 _GL_CXXALIASWARN (scandir);
 #elif defined GNULIB_POSIXCHECK
-# undef scandir
 # if HAVE_RAW_DECL_SCANDIR
 _GL_WARN_ON_USE (scandir, "scandir is unportable - "
                  "use gnulib module scandir for portability");
@@ -755,7 +914,7 @@ _GL_WARN_ON_USE (scandir, "scandir is unportable - "
 /* Compare two 'struct dirent' entries alphabetically.  */
 # if !1
 _GL_FUNCDECL_SYS (alphasort, int,
-                  (const struct dirent **, const struct dirent **)
+                  (const struct dirent **, const struct dirent **),
                   _GL_ATTRIBUTE_PURE
                   _GL_ARG_NONNULL ((1, 2)));
 # endif
@@ -765,11 +924,49 @@ _GL_CXXALIAS_SYS_CAST (alphasort, int,
                        (const struct dirent **, const struct dirent **));
 _GL_CXXALIASWARN (alphasort);
 #elif defined GNULIB_POSIXCHECK
-# undef alphasort
 # if HAVE_RAW_DECL_ALPHASORT
 _GL_WARN_ON_USE (alphasort, "alphasort is unportable - "
                  "use gnulib module alphasort for portability");
 # endif
+#endif
+
+
+/* Includes that provide only macros that don't need to be overridden.
+   (Includes that are needed for type definitions and function declarations
+   have their place above, before the function overrides.)  */
+
+/* Conversion between S_IF* and DT_* file types.  */
+#if ! (defined IFTODT && defined DTTOIF)
+# include <sys/stat.h>
+# ifdef S_ISWHT
+#  define _GL_DIRENT_S_ISWHT(mode) S_ISWHT(mode)
+# else
+#  define _GL_DIRENT_S_ISWHT(mode) 0
+# endif
+# ifdef S_IFWHT
+#  define _GL_DIRENT_S_IFWHT S_IFWHT
+# else
+#  define _GL_DIRENT_S_IFWHT (DT_WHT << 12) /* just a guess */
+# endif
+#endif
+/* Conversion from a 'stat' mode to a DT_* value.  */
+#ifndef IFTODT
+# define IFTODT(mode) \
+   (S_ISREG (mode) ? DT_REG : S_ISDIR (mode) ? DT_DIR \
+    : S_ISLNK (mode) ? DT_LNK : S_ISBLK (mode) ? DT_BLK \
+    : S_ISCHR (mode) ? DT_CHR : S_ISFIFO (mode) ? DT_FIFO \
+    : S_ISSOCK (mode) ? DT_SOCK \
+    : _GL_DIRENT_S_ISWHT (mode) ? DT_WHT : DT_UNKNOWN)
+#endif
+/* Conversion from a DT_* value to a 'stat' mode.  */
+#ifndef DTTOIF
+# define DTTOIF(dirtype) \
+   ((dirtype) == DT_REG ? S_IFREG : (dirtype) == DT_DIR ? S_IFDIR \
+    : (dirtype) == DT_LNK ? S_IFLNK : (dirtype) == DT_BLK ? S_IFBLK \
+    : (dirtype) == DT_CHR ? S_IFCHR :  dirtype == DT_FIFO ? S_IFIFO \
+    : (dirtype) == DT_SOCK ? S_IFSOCK \
+    : (dirtype) == DT_WHT ? _GL_DIRENT_S_IFWHT \
+    : (dirtype) << 12 /* just a guess */)
 #endif
 
 
