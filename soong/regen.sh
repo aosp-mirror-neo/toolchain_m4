@@ -43,10 +43,20 @@ if [ $DIR = "linux_glibc" ]; then
   glibc="${ANDROID_BUILD_TOP}/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8"
   CFLAGS="--sysroot=${glibc}/sysroot"
   LDFLAGS="--sysroot=${glibc}/sysroot -B${glibc}/lib/gcc/x86_64-linux/4.8.3 -L${glibc}lib/gcc/x86_64-linux/4.8.3 -L${glibc}/x86_64-linux/lib64 --rtlib=compiler-rt"
+  # Our glibc headers have an inline definition of memset_explicit that confuses the configure
+  # script.
+  config_opts+=("ac_cv_have_decl_memset_explicit=yes")
+  config_opts+=("ac_cv_func_memset_explicit=yes")
+  config_opts+=("gl_cv_onwards_func_memset_explicit=yes")
 elif [ $DIR = "linux_musl" ]; then
-  sysroot="${ANDROID_BUILD_TOP}/prebuilts/build-tools/sysroots/x86_64-linux-musl"
-  CFLAGS="--sysroot=${sysroot} -target x86_64-linux-musl"
+  sysroot="${ANDROID_BUILD_TOP}/prebuilts/build-tools/sysroots/x86_64-unknown-linux-musl"
+  CFLAGS="--sysroot=${sysroot} -target x86_64-unknown-linux-musl"
   LDFLAGS="--rtlib=compiler-rt -fuse-ld=lld"
+  export LD_LIBRARY_PATH="${sysroot}/lib"
+  # Builds against within Soong force _LARGEFILE64_SOURCE on when _GNU_SOURCE is on, but the musl
+  # sysroot used here does not, leading to a disagreement on whether off64_t is defined or not.
+  CFLAGS="${CFLAGS} -D_LARGEFILE64_SOURCE=1"
+  #config_opts+=("gl_cv_off64_t=yes")
 elif [ $DIR = "darwin" ]; then
   # vfork is deprecated on Mac, so always fallback to fork
   config_opts+=("ac_cv_func_vfork=no")
@@ -90,7 +100,7 @@ cc_defaults {
     target: {
         $TARGET: {
             srcs: [
-                $(find lib src -name '*.o' | sed -E "s/(.*)\.o/\"\1\.c\",/" | LC_ALL=C sort)
+                $(find lib src -name '*.o' | sed -E -e "s/(.*)\.o/\"\1\.c\",/" -e "s/libm4_a-//" | LC_ALL=C sort)
             ],
         },
     },
@@ -101,6 +111,7 @@ ${ANDROID_BUILD_TOP}/prebuilts/build-tools/$UNAME-x86/bin/bpfmt -w ../Android.bp
 sed -ibak 's%#define __x86_64__ 1%/* compiler-set */%' lib/config.h
 
 cd lib
+mkdir ../../malloc
 find . -name '*.h' | xargs -IX cp X ../../X
 cd ../..
 rm -rf tmp

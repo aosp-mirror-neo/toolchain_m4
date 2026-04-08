@@ -1,17 +1,17 @@
 /* Split a double into fraction and mantissa.
-   Copyright (C) 2007-2021 Free Software Foundation, Inc.
+   Copyright (C) 2007-2026 Free Software Foundation, Inc.
 
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
-   (at your option) any later version.
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* Written by Paolo Bonzini <bonzini@gnu.org>, 2003, and
@@ -57,8 +57,6 @@
 DOUBLE
 FUNC (DOUBLE x, int *expptr)
 {
-  int sign;
-  int exponent;
   DECL_ROUNDING
 
   /* Test for NaN, infinity, and zero.  */
@@ -68,7 +66,7 @@ FUNC (DOUBLE x, int *expptr)
       return x;
     }
 
-  sign = 0;
+  int sign = 0;
   if (x < 0)
     {
       x = - x;
@@ -76,6 +74,8 @@ FUNC (DOUBLE x, int *expptr)
     }
 
   BEGIN_ROUNDING ();
+
+  int exponent;
 
   {
     /* Since the exponent is an 'int', it fits in 64 bits.  Therefore the
