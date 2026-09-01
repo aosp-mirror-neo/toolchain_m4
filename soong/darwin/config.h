@@ -1792,7 +1792,7 @@
 
 /* Define to 1 if you have the 'posix_spawn_file_actions_addchdir' function.
    */
-/* #undef HAVE_POSIX_SPAWN_FILE_ACTIONS_ADDCHDIR */
+#define HAVE_POSIX_SPAWN_FILE_ACTIONS_ADDCHDIR 1
 
 /* Define to 1 if you have the `posix_spawn_file_actions_addchdir_np'
    function. */
