@@ -1477,7 +1477,7 @@ _GL_WARN_ON_USE (posix_spawn_file_actions_adddup2,
 #if 1
 /* Add an action to FILE-ACTIONS which tells the implementation to call
    'chdir' to the given directory during the 'spawn' call.  */
-# if 0
+# if 1
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   define posix_spawn_file_actions_addchdir rpl_posix_spawn_file_actions_addchdir
 #  endif
