@@ -32,6 +32,14 @@ cc_binary_host {
         "lib",
         "src",
     ],
+    extra_include_dir_deps: [
+        "lib/at-func.c",
+        "lib/malloc/dynarray-skeleton.c",
+        "lib/printf-frexp.c",
+        "lib/regcomp.c",
+        "lib/regex_internal.c",
+        "lib/regexec.c",
+    ],
 
     target: {
         glibc: {
